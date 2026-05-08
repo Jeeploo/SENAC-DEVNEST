@@ -1,4 +1,4 @@
-# User Stories - SENAC DEVNEST
+ SENAC DEVNEST
 
 ## Português
 
