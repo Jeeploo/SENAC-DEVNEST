@@ -4,7 +4,7 @@
 
 ### 1. Nome do Projeto
 
-[Inserir nome do projeto]
+[SENAC DEVNEST]
 
 ---
 
