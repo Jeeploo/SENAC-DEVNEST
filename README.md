@@ -1,287 +1,327 @@
-## SENAC DEVNEST
+# 🚀 SENAC DEVNEST
 
-## Português
+<p align="center">
+  <img src="https://img.shields.io/badge/Status-Em%20Desenvolvimento-8A2BE2?style=for-the-badge"/>
+  <img src="https://img.shields.io/badge/Faculdade-SENAC-FF6B00?style=for-the-badge"/>
+  <img src="https://img.shields.io/badge/Version-1.0-blue?style=for-the-badge"/>
+</p>
 
-### 1. Nome do Projeto
-
-SENAC DEVNEST
-
----
-
-### 2. Descrição do Documento
-
-Este documento apresenta as User Stories do projeto [Inserir nome do projeto], descrevendo as funcionalidades do sistema a partir da perspectiva dos usuários.
+<p align="center">
+  Plataforma acadêmica colaborativa para conexão entre alunos, professores e empresas parceiras.
+</p>
 
 ---
 
-### 3. Objetivo das User Stories
+# 🇧🇷 Português | 🇺🇸 English
 
-[Inserir o objetivo das User Stories]
+## 📌 Sobre o Projeto | About the Project
 
----
+O **SENAC DEVNEST** é uma plataforma acadêmica colaborativa desenvolvida para conectar alunos, professores, coordenadores e empresas parceiras em um único ambiente digital moderno e intuitivo.
 
-### 4. Perfis de Usuário
-
-#### 4.1 Aluno
-
-[Inserir descrição do perfil do aluno]
-
-#### 4.2 Professor
-
-[Inserir descrição do perfil do professor]
-
-#### 4.3 Administrador/Coordenador
-
-[Inserir descrição do perfil do administrador/coordenador]
-
-#### 4.4 Empresa Parceira
-
-[Inserir descrição do perfil da empresa parceira]
+O sistema centraliza projetos, atividades, mentorias e oportunidades profissionais, promovendo aprendizado prático e integração com o mercado de trabalho.
 
 ---
 
-### 5. User Stories
+The **SENAC DEVNEST** is a collaborative academic platform designed to connect students, teachers, coordinators, and partner companies in a modern and intuitive digital environment.
 
-### US01 - [Título da User Story]
+The system centralizes projects, activities, mentoring, and professional opportunities, promoting practical learning and market integration.
 
-**Como** [tipo de usuário],  
-**quero** [ação desejada],  
-**para** [objetivo ou benefício].
+---
+# 🎯 Objetivo do Projeto | Project Objective
 
-#### Critérios de Aceitação
+O **SENAC DEVNEST** tem como objetivo criar um **Observatório de Projetos Integradores**, permitindo que alunos armazenem, organizem e apresentem os projetos desenvolvidos ao longo da graduação em um ambiente digital moderno, acessível e colaborativo.
 
-- [Inserir critério de aceitação 1]
-- [Inserir critério de aceitação 2]
-- [Inserir critério de aceitação 3]
+A plataforma busca fortalecer a conexão entre **alunos**, **professores** e **empresas parceiras do SENAC**, funcionando como uma vitrine acadêmica para divulgação de ideias, soluções e experiências desenvolvidas dentro da instituição.
 
-#### Prioridade
+Além disso, o sistema permitirá:
 
-[Alta / Média / Baixa]
+- 📚 Centralização dos projetos acadêmicos  
+- 👨‍🎓 Valorização do portfólio dos alunos  
+- 🏢 Aproximação entre estudantes e empresas parceiras  
+- 🚀 Divulgação de talentos e soluções inovadoras  
+- 🤝 Incentivo à colaboração e networking profissional  
+- 📈 Acompanhamento da evolução acadêmica dos estudantes  
+
+O projeto também visa incentivar a inovação, a prática profissional e a integração entre o ambiente acadêmico e o mercado de trabalho, oferecendo oportunidades reais de visibilidade para os alunos e seus projetos.
 
 ---
 
-### US02 - [Título da User Story]
+The **SENAC DEVNEST** aims to create an **Integrated Projects Observatory**, allowing students to store, organize, and showcase projects developed throughout their academic journey in a modern, accessible, and collaborative digital environment.
 
-**Como** [tipo de usuário],  
-**quero** [ação desejada],  
-**para** [objetivo ou benefício].
+The platform seeks to strengthen the connection between **students**, **teachers**, and **SENAC partner companies**, functioning as an academic showcase for sharing ideas, solutions, and experiences developed within the institution.
 
-#### Critérios de Aceitação
+Additionally, the system will provide:
 
-- [Inserir critério de aceitação 1]
-- [Inserir critério de aceitação 2]
-- [Inserir critério de aceitação 3]
+- 📚 Centralization of academic projects  
+- 👨‍🎓 Enhancement of student portfolios  
+- 🏢 Connection between students and partner companies  
+- 🚀 Promotion of talent and innovative solutions  
+- 🤝 Encouragement of collaboration and professional networking  
+- 📈 Monitoring of students’ academic progress  
 
-#### Prioridade
-
-[Alta / Média / Baixa]
-
----
-
-### US03 - [Título da User Story]
-
-**Como** [tipo de usuário],  
-**quero** [ação desejada],  
-**para** [objetivo ou benefício].
-
-#### Critérios de Aceitação
-
-- [Inserir critério de aceitação 1]
-- [Inserir critério de aceitação 2]
-- [Inserir critério de aceitação 3]
-
-#### Prioridade
-
-[Alta / Média / Baixa]
+The project also aims to encourage innovation, professional practice, and integration between the academic environment and the job market, offering students real opportunities for visibility and professional growth.
 
 ---
 
-### US04 - [Título da User Story]
+# 🎯 Objetivo das User Stories | User Stories Objective
 
-**Como** [tipo de usuário],  
-**quero** [ação desejada],  
-**para** [objetivo ou benefício].
-
-#### Critérios de Aceitação
-
-- [Inserir critério de aceitação 1]
-- [Inserir critério de aceitação 2]
-- [Inserir critério de aceitação 3]
-
-#### Prioridade
-
-[Alta / Média / Baixa]
+As User Stories representam as necessidades dos usuários do sistema de forma clara e objetiva, garantindo que as funcionalidades desenvolvidas atendam aos requisitos acadêmicos e de negócio do projeto.
 
 ---
 
-### US05 - [Título da User Story]
-
-**Como** [tipo de usuário],  
-**quero** [ação desejada],  
-**para** [objetivo ou benefício].
-
-#### Critérios de Aceitação
-
-- [Inserir critério de aceitação 1]
-- [Inserir critério de aceitação 2]
-- [Inserir critério de aceitação 3]
-
-#### Prioridade
-
-[Alta / Média / Baixa]
+The User Stories represent the users’ needs clearly and objectively, ensuring that all implemented features meet the academic and business requirements of the project.
 
 ---
 
-### 6. Regras Relacionadas às User Stories
+# 👥 Perfis de Usuário | User Profiles
 
-[Inserir regras de negócio relacionadas às User Stories]
+## 👨‍🎓 Aluno | Student
 
----
-
-### 7. Observações
-
-[Inserir observações gerais sobre as User Stories]
+Participa de projetos, acessa conteúdos, acompanha atividades e interage com professores e empresas parceiras.
 
 ---
 
-## English
-
-### 1. Project Name
-
-[Insert project name]
+Participates in projects, accesses content, follows activities, and interacts with teachers and partner companies.
 
 ---
 
-### 2. Document Description
+## 👨‍🏫 Professor | Teacher
 
-This document presents the User Stories of the [Insert project name] project, describing the system features from the users’ perspective.
-
----
-
-### 3. User Stories Objective
-
-[Insert the objective of the User Stories]
+Orienta alunos, cria atividades, acompanha desempenho e valida entregas acadêmicas.
 
 ---
 
-### 4. User Profiles
-
-#### 4.1 Student
-
-[Insert student profile description]
-
-#### 4.2 Teacher
-
-[Insert teacher profile description]
-
-#### 4.3 Administrator/Coordinator
-
-[Insert administrator/coordinator profile description]
-
-#### 4.4 Partner Company
-
-[Insert partner company profile description]
+Mentors students, creates activities, tracks performance, and validates academic deliveries.
 
 ---
 
-### 5. User Stories
+## 👨‍💼 Administrador / Coordenador | Administrator / Coordinator
 
-### US01 - [User Story Title]
-
-**As a** [user type],  
-**I want** [desired action],  
-**so that** [goal or benefit].
-
-#### Acceptance Criteria
-
-- [Insert acceptance criterion 1]
-- [Insert acceptance criterion 2]
-- [Insert acceptance criterion 3]
-
-#### Priority
-
-[High / Medium / Low]
+Gerencia usuários, turmas, projetos e permissões da plataforma.
 
 ---
 
-### US02 - [User Story Title]
-
-**As a** [user type],  
-**I want** [desired action],  
-**so that** [goal or benefit].
-
-#### Acceptance Criteria
-
-- [Insert acceptance criterion 1]
-- [Insert acceptance criterion 2]
-- [Insert acceptance criterion 3]
-
-#### Priority
-
-[High / Medium / Low]
+Manages users, classes, projects, and platform permissions.
 
 ---
 
-### US03 - [User Story Title]
+## 🏢 Empresa Parceira | Partner Company
 
-**As a** [user type],  
-**I want** [desired action],  
-**so that** [goal or benefit].
-
-#### Acceptance Criteria
-
-- [Insert acceptance criterion 1]
-- [Insert acceptance criterion 2]
-- [Insert acceptance criterion 3]
-
-#### Priority
-
-[High / Medium / Low]
+Oferece desafios, oportunidades, mentorias e conexão entre estudantes e o mercado.
 
 ---
 
-### US04 - [User Story Title]
-
-**As a** [user type],  
-**I want** [desired action],  
-**so that** [goal or benefit].
-
-#### Acceptance Criteria
-
-- [Insert acceptance criterion 1]
-- [Insert acceptance criterion 2]
-- [Insert acceptance criterion 3]
-
-#### Priority
-
-[High / Medium / Low]
+Provides challenges, opportunities, mentoring, and connections between students and the job market.
 
 ---
 
-### US05 - [User Story Title]
+# 📖 User Stories
 
-**As a** [user type],  
-**I want** [desired action],  
-**so that** [goal or benefit].
 
-#### Acceptance Criteria
+# 🟣 US01 - Cadastro de Usuário | User Registration
 
-- [Insert acceptance criterion 1]
-- [Insert acceptance criterion 2]
-- [Insert acceptance criterion 3]
-
-#### Priority
-
-[High / Medium / Low]
+**Como** usuário,  
+**quero** criar uma conta na plataforma,  
+**para** acessar os recursos disponíveis do sistema.
 
 ---
 
-### 6. Rules Related to User Stories
-
-[Insert business rules related to the User Stories]
+**As a** user,  
+**I want** to create an account on the platform,  
+**so that** I can access the available system resources.
 
 ---
 
-### 7. Notes
+### ✅ Critérios de Aceitação | Acceptance Criteria
 
-[Insert general notes about the User Stories]
+- O usuário deve informar nome, e-mail e senha  
+- O sistema deve validar e-mails duplicados  
+- O cadastro deve ser concluído com sucesso
+
+---
+
+- The user must provide name, email, and password  
+- The system must validate duplicate emails  
+- Registration must be completed successfully  
+
+### 🔥 Prioridade | Priority
+
+Alta | High
+
+---
+
+# 🟣 US02 - Login no Sistema | System Login
+
+**Como** usuário,  
+**quero** realizar login na plataforma,  
+**para** acessar minha área personalizada.
+
+---
+
+**As a** user,  
+**I want** to log into the platform,  
+**so that** I can access my personalized dashboard.
+
+---
+
+### ✅ Critérios de Aceitação | Acceptance Criteria
+
+- O sistema deve validar credenciais  
+- O usuário deve acessar apenas após autenticação  
+- Deve existir opção de recuperação de senha
+
+---
+
+- The system must validate credentials  
+- Access should only be granted after authentication  
+- Password recovery option must exist  
+
+### 🔥 Prioridade | Priority
+
+Alta | High
+
+---
+
+# 🟣 US03 - Participação em Projetos | Project Participation
+
+**Como** aluno,  
+**quero** participar de projetos acadêmicos,  
+**para** desenvolver minhas habilidades práticas.
+
+---
+
+**As a** student,  
+**I want** to participate in academic projects,  
+**so that** I can improve my practical skills.
+
+---
+
+### ✅ Critérios de Aceitação | Acceptance Criteria
+
+- O aluno deve visualizar projetos disponíveis  
+- O sistema deve permitir inscrição em projetos  
+- O professor deve validar participação
+
+---
+
+- Students must view available projects  
+- The system must allow project registration  
+- Teachers must validate participation  
+
+### 🔥 Prioridade | Priority
+
+Média | Medium
+
+---
+
+# 🟣 US04 - Gerenciamento de Atividades | Activity Management
+
+**Como** professor,  
+**quero** criar e gerenciar atividades,  
+**para** acompanhar o desempenho dos alunos.
+
+---
+
+**As a** teacher,  
+**I want** to create and manage activities,  
+**so that** I can track student performance.
+
+---
+
+### ✅ Critérios de Aceitação | Acceptance Criteria
+
+- O professor deve cadastrar atividades  
+- O sistema deve permitir edição e exclusão  
+- Os alunos devem visualizar atividades atribuídas  
+
+---
+
+- Teachers must create activities  
+- The system must allow editing and deletion  
+- Students must view assigned activities  
+
+### 🔥 Prioridade | Priority
+
+Alta | High
+
+---
+
+# 🟣 US05 - Integração com Empresas | Company Integration
+
+**Como** empresa parceira,  
+**quero** divulgar oportunidades e desafios,  
+**para** conectar estudantes ao mercado de trabalho.
+
+---
+
+**As a** partner company,  
+**I want** to publish opportunities and challenges,  
+**so that** I can connect students with the job market.
+
+---
+
+### ✅ Critérios de Aceitação | Acceptance Criteria
+
+- Empresas devem cadastrar oportunidades  
+- Alunos devem visualizar vagas e desafios  
+- O sistema deve registrar candidaturas  
+
+---
+
+- Companies must register opportunities  
+- Students must view jobs and challenges  
+- The system must register applications  
+
+### 🔥 Prioridade | Priority
+
+Média | Medium
+
+---
+
+# 📋 Regras de Negócio | Business Rules
+
+- Apenas usuários autenticados podem acessar funcionalidades internas  
+- Professores possuem permissões diferentes dos alunos  
+- Empresas parceiras devem ser aprovadas pela coordenação  
+- Todas as atividades devem possuir prazo de entrega  
+- O sistema deve registrar histórico de interações
+
+---
+
+- Only authenticated users can access internal features  
+- Teachers have different permissions from students  
+- Partner companies must be approved by coordinators  
+- All activities must contain deadlines  
+- The system must maintain interaction history  
+
+---
+
+# 🛠️ Tecnologias Utilizadas | Technologies Used
+
+Frontend: React / Next.js
+Backend: Node.js
+Database: PostgreSQL
+Version Control: Git & GitHub
+
+---
+
+# 📂 Estrutura do Projeto | Project Structure
+
+```bash
+📦 senac-devnest
+ ┣ 📂 frontend
+ ┣ 📂 backend
+ ┣ 📂 database
+ ┣ 📂 docs
+ ┗ 📜 README.md
+```
+
+---
+
+# 👨‍💻 Equipe de Desenvolvimento | Development Team
+
+Projeto desenvolvido para fins acadêmicos no SENAC.
+
+---
+
+Project developed for academic purposes at SENAC.
