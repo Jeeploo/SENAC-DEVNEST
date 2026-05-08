@@ -1,10 +1,10 @@
-# User Stories - [SENAC DEVNEST]
+# User Stories - SENAC DEVNEST
 
 ## Português
 
 ### 1. Nome do Projeto
 
-[SENAC DEVNEST]
+SENAC DEVNEST
 
 ---
 
