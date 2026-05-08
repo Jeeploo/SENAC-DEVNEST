@@ -1,6 +1,6 @@
-# User Stories - [Nome do Projeto]
+# User Stories - [SENAC DEVNEST]
 
-## 🇧🇷 Português
+## Português
 
 ### 1. Nome do Projeto
 
@@ -144,7 +144,7 @@ Este documento apresenta as User Stories do projeto [Inserir nome do projeto], d
 
 ---
 
-## 🇺🇸 English
+## English
 
 ### 1. Project Name
 
