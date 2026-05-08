@@ -1,7 +1,4 @@
-
-
-```markdown
-# [Nome do Projeto]
+# User Stories - [Nome do Projeto]
 
 ## 🇧🇷 Português
 
@@ -11,39 +8,139 @@
 
 ---
 
-### 2. Descrição do Sistema
+### 2. Descrição do Documento
 
-[Inserir descrição do sistema]
-
----
-
-### 3. Objetivo
-
-[Inserir objetivo do projeto]
+Este documento apresenta as User Stories do projeto [Inserir nome do projeto], descrevendo as funcionalidades do sistema a partir da perspectiva dos usuários.
 
 ---
 
-### 4. Tecnologias Utilizadas
+### 3. Objetivo das User Stories
 
-[Inserir tecnologias utilizadas]
-
----
-
-### 5. Regras de Negócio
-
-[Inserir regras de negócio do sistema]
+[Inserir o objetivo das User Stories]
 
 ---
 
-### 6. Como Executar o Projeto
+### 4. Perfis de Usuário
 
-[Inserir instruções para executar o projeto]
+#### 4.1 Aluno
+
+[Inserir descrição do perfil do aluno]
+
+#### 4.2 Professor
+
+[Inserir descrição do perfil do professor]
+
+#### 4.3 Administrador/Coordenador
+
+[Inserir descrição do perfil do administrador/coordenador]
+
+#### 4.4 Empresa Parceira
+
+[Inserir descrição do perfil da empresa parceira]
 
 ---
 
-### 7. Link da Documentação
+### 5. User Stories
 
-[Inserir link da documentação]
+### US01 - [Título da User Story]
+
+**Como** [tipo de usuário],  
+**quero** [ação desejada],  
+**para** [objetivo ou benefício].
+
+#### Critérios de Aceitação
+
+- [Inserir critério de aceitação 1]
+- [Inserir critério de aceitação 2]
+- [Inserir critério de aceitação 3]
+
+#### Prioridade
+
+[Alta / Média / Baixa]
+
+---
+
+### US02 - [Título da User Story]
+
+**Como** [tipo de usuário],  
+**quero** [ação desejada],  
+**para** [objetivo ou benefício].
+
+#### Critérios de Aceitação
+
+- [Inserir critério de aceitação 1]
+- [Inserir critério de aceitação 2]
+- [Inserir critério de aceitação 3]
+
+#### Prioridade
+
+[Alta / Média / Baixa]
+
+---
+
+### US03 - [Título da User Story]
+
+**Como** [tipo de usuário],  
+**quero** [ação desejada],  
+**para** [objetivo ou benefício].
+
+#### Critérios de Aceitação
+
+- [Inserir critério de aceitação 1]
+- [Inserir critério de aceitação 2]
+- [Inserir critério de aceitação 3]
+
+#### Prioridade
+
+[Alta / Média / Baixa]
+
+---
+
+### US04 - [Título da User Story]
+
+**Como** [tipo de usuário],  
+**quero** [ação desejada],  
+**para** [objetivo ou benefício].
+
+#### Critérios de Aceitação
+
+- [Inserir critério de aceitação 1]
+- [Inserir critério de aceitação 2]
+- [Inserir critério de aceitação 3]
+
+#### Prioridade
+
+[Alta / Média / Baixa]
+
+---
+
+### US05 - [Título da User Story]
+
+**Como** [tipo de usuário],  
+**quero** [ação desejada],  
+**para** [objetivo ou benefício].
+
+#### Critérios de Aceitação
+
+- [Inserir critério de aceitação 1]
+- [Inserir critério de aceitação 2]
+- [Inserir critério de aceitação 3]
+
+#### Prioridade
+
+[Alta / Média / Baixa]
+
+---
+
+### 6. Regras Relacionadas às User Stories
+
+[Inserir regras de negócio relacionadas às User Stories]
+
+---
+
+### 7. Observações
+
+[Inserir observações gerais sobre as User Stories]
 
 ---
 
@@ -55,37 +152,136 @@
 
 ---
 
-### 2. System Description
+### 2. Document Description
 
-[Insert system description]
-
----
-
-### 3. Objective
-
-[Insert project objective]
+This document presents the User Stories of the [Insert project name] project, describing the system features from the users’ perspective.
 
 ---
 
-### 4. Technologies Used
+### 3. User Stories Objective
 
-[Insert technologies used]
-
----
-
-### 5. Business Rules
-
-[Insert system business rules]
+[Insert the objective of the User Stories]
 
 ---
 
-### 6. How to Run the Project
+### 4. User Profiles
 
-[Insert project execution instructions]
+#### 4.1 Student
+
+[Insert student profile description]
+
+#### 4.2 Teacher
+
+[Insert teacher profile description]
+
+#### 4.3 Administrator/Coordinator
+
+[Insert administrator/coordinator profile description]
+
+#### 4.4 Partner Company
+
+[Insert partner company profile description]
 
 ---
 
-### 7. Documentation Link
+### 5. User Stories
 
-[Insert documentation link]
-```
+### US01 - [User Story Title]
+
+**As a** [user type],  
+**I want** [desired action],  
+**so that** [goal or benefit].
+
+#### Acceptance Criteria
+
+- [Insert acceptance criterion 1]
+- [Insert acceptance criterion 2]
+- [Insert acceptance criterion 3]
+
+#### Priority
+
+[High / Medium / Low]
+
+---
+
+### US02 - [User Story Title]
+
+**As a** [user type],  
+**I want** [desired action],  
+**so that** [goal or benefit].
+
+#### Acceptance Criteria
+
+- [Insert acceptance criterion 1]
+- [Insert acceptance criterion 2]
+- [Insert acceptance criterion 3]
+
+#### Priority
+
+[High / Medium / Low]
+
+---
+
+### US03 - [User Story Title]
+
+**As a** [user type],  
+**I want** [desired action],  
+**so that** [goal or benefit].
+
+#### Acceptance Criteria
+
+- [Insert acceptance criterion 1]
+- [Insert acceptance criterion 2]
+- [Insert acceptance criterion 3]
+
+#### Priority
+
+[High / Medium / Low]
+
+---
+
+### US04 - [User Story Title]
+
+**As a** [user type],  
+**I want** [desired action],  
+**so that** [goal or benefit].
+
+#### Acceptance Criteria
+
+- [Insert acceptance criterion 1]
+- [Insert acceptance criterion 2]
+- [Insert acceptance criterion 3]
+
+#### Priority
+
+[High / Medium / Low]
+
+---
+
+### US05 - [User Story Title]
+
+**As a** [user type],  
+**I want** [desired action],  
+**so that** [goal or benefit].
+
+#### Acceptance Criteria
+
+- [Insert acceptance criterion 1]
+- [Insert acceptance criterion 2]
+- [Insert acceptance criterion 3]
+
+#### Priority
+
+[High / Medium / Low]
+
+---
+
+### 6. Rules Related to User Stories
+
+[Insert business rules related to the User Stories]
+
+---
+
+### 7. Notes
+
+[Insert general notes about the User Stories]
