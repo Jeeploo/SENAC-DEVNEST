@@ -1,4 +1,4 @@
-Claro — aqui está **apenas o escopo/modelo do README**, sem preencher as informações:
+
 
 ```markdown
 # [Nome do Projeto]
