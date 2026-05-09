@@ -1,4 +1,4 @@
-# 🚀 SENAC DEVNEST
+#  SENAC DEVNEST
 
 <p align="center">
   <img src="https://img.shields.io/badge/Status-Em%20Desenvolvimento-8A2BE2?style=for-the-badge"/>
@@ -14,7 +14,7 @@
 
 # 🇧🇷 Português | 🇺🇸 English
 
-## 📌 Sobre o Projeto | About the Project
+##  Sobre o Projeto | About the Project
 
 O **SENAC DEVNEST** é uma plataforma acadêmica colaborativa desenvolvida para conectar alunos, professores, coordenadores e empresas parceiras em um único ambiente digital moderno e intuitivo.
 
@@ -27,7 +27,7 @@ The **SENAC DEVNEST** is a collaborative academic platform designed to connect s
 The system centralizes projects, activities, mentoring, and professional opportunities, promoting practical learning and market integration.
 
 ---
-# 🎯 Objetivo do Projeto | Project Objective
+#  Objetivo do Projeto | Project Objective
 
 O **SENAC DEVNEST** tem como objetivo criar um **Observatório de Projetos Integradores**, permitindo que alunos armazenem, organizem e apresentem os projetos desenvolvidos ao longo da graduação em um ambiente digital moderno, acessível e colaborativo.
 
@@ -35,12 +35,12 @@ A plataforma busca fortalecer a conexão entre **alunos**, **professores** e **e
 
 Além disso, o sistema permitirá:
 
-- 📚 Centralização dos projetos acadêmicos  
-- 👨‍🎓 Valorização do portfólio dos alunos  
-- 🏢 Aproximação entre estudantes e empresas parceiras  
-- 🚀 Divulgação de talentos e soluções inovadoras  
-- 🤝 Incentivo à colaboração e networking profissional  
-- 📈 Acompanhamento da evolução acadêmica dos estudantes  
+-  Centralização dos projetos acadêmicos  
+-  Valorização do portfólio dos alunos  
+-  Aproximação entre estudantes e empresas parceiras  
+-  Divulgação de talentos e soluções inovadoras  
+-  Incentivo à colaboração e networking profissional  
+-  Acompanhamento da evolução acadêmica dos estudantes  
 
 O projeto também visa incentivar a inovação, a prática profissional e a integração entre o ambiente acadêmico e o mercado de trabalho, oferecendo oportunidades reais de visibilidade para os alunos e seus projetos.
 
@@ -52,18 +52,18 @@ The platform seeks to strengthen the connection between **students**, **teachers
 
 Additionally, the system will provide:
 
-- 📚 Centralization of academic projects  
-- 👨‍🎓 Enhancement of student portfolios  
-- 🏢 Connection between students and partner companies  
-- 🚀 Promotion of talent and innovative solutions  
-- 🤝 Encouragement of collaboration and professional networking  
-- 📈 Monitoring of students’ academic progress  
+-  Centralization of academic projects  
+-  Enhancement of student portfolios  
+-  Connection between students and partner companies  
+-  Promotion of talent and innovative solutions  
+-  Encouragement of collaboration and professional networking  
+-  Monitoring of students’ academic progress  
 
 The project also aims to encourage innovation, professional practice, and integration between the academic environment and the job market, offering students real opportunities for visibility and professional growth.
 
 ---
 
-# 🎯 Objetivo das User Stories | User Stories Objective
+#  Objetivo das User Stories | User Stories Objective
 
 As User Stories representam as necessidades dos usuários do sistema de forma clara e objetiva, garantindo que as funcionalidades desenvolvidas atendam aos requisitos acadêmicos e de negócio do projeto.
 
@@ -73,9 +73,9 @@ The User Stories represent the users’ needs clearly and objectively, ensuring 
 
 ---
 
-# 👥 Perfis de Usuário | User Profiles
+#  Perfis de Usuário | User Profiles
 
-## 👨‍🎓 Aluno | Student
+##  Aluno | Student
 
 Participa de projetos, acessa conteúdos, acompanha atividades e interage com professores e empresas parceiras.
 
@@ -85,7 +85,7 @@ Participates in projects, accesses content, follows activities, and interacts wi
 
 ---
 
-## 👨‍🏫 Professor | Teacher
+##  Professor | Teacher
 
 Orienta alunos, cria atividades, acompanha desempenho e valida entregas acadêmicas.
 
@@ -95,7 +95,7 @@ Mentors students, creates activities, tracks performance, and validates academic
 
 ---
 
-## 👨‍💼 Administrador / Coordenador | Administrator / Coordinator
+##  Administrador / Coordenador | Administrator / Coordinator
 
 Gerencia usuários, turmas, projetos e permissões da plataforma.
 
@@ -105,7 +105,7 @@ Manages users, classes, projects, and platform permissions.
 
 ---
 
-## 🏢 Empresa Parceira | Partner Company
+##  Empresa Parceira | Partner Company
 
 Oferece desafios, oportunidades, mentorias e conexão entre estudantes e o mercado.
 
@@ -115,10 +115,10 @@ Provides challenges, opportunities, mentoring, and connections between students 
 
 ---
 
-# 📖 User Stories
+#  User Stories
 
 
-# 🟣 US01 - Cadastro de Usuário | User Registration
+#  US01 - Cadastro de Usuário | User Registration
 
 **Como** usuário,  
 **quero** criar uma conta na plataforma,  
@@ -132,7 +132,7 @@ Provides challenges, opportunities, mentoring, and connections between students 
 
 ---
 
-### ✅ Critérios de Aceitação | Acceptance Criteria
+###  Critérios de Aceitação | Acceptance Criteria
 
 - O usuário deve informar nome, e-mail e senha  
 - O sistema deve validar e-mails duplicados  
@@ -144,13 +144,13 @@ Provides challenges, opportunities, mentoring, and connections between students 
 - The system must validate duplicate emails  
 - Registration must be completed successfully  
 
-### 🔥 Prioridade | Priority
+###  Prioridade | Priority
 
 Alta | High
 
 ---
 
-# 🟣 US02 - Login no Sistema | System Login
+#  US02 - Login no Sistema | System Login
 
 **Como** usuário,  
 **quero** realizar login na plataforma,  
@@ -164,7 +164,7 @@ Alta | High
 
 ---
 
-### ✅ Critérios de Aceitação | Acceptance Criteria
+###  Critérios de Aceitação | Acceptance Criteria
 
 - O sistema deve validar credenciais  
 - O usuário deve acessar apenas após autenticação  
@@ -176,13 +176,13 @@ Alta | High
 - Access should only be granted after authentication  
 - Password recovery option must exist  
 
-### 🔥 Prioridade | Priority
+###  Prioridade | Priority
 
 Alta | High
 
 ---
 
-# 🟣 US03 - Participação em Projetos | Project Participation
+#  US03 - Participação em Projetos | Project Participation
 
 **Como** aluno,  
 **quero** participar de projetos acadêmicos,  
@@ -196,7 +196,7 @@ Alta | High
 
 ---
 
-### ✅ Critérios de Aceitação | Acceptance Criteria
+###  Critérios de Aceitação | Acceptance Criteria
 
 - O aluno deve visualizar projetos disponíveis  
 - O sistema deve permitir inscrição em projetos  
@@ -208,13 +208,13 @@ Alta | High
 - The system must allow project registration  
 - Teachers must validate participation  
 
-### 🔥 Prioridade | Priority
+###  Prioridade | Priority
 
 Média | Medium
 
 ---
 
-# 🟣 US04 - Gerenciamento de Atividades | Activity Management
+#  US04 - Gerenciamento de Atividades | Activity Management
 
 **Como** professor,  
 **quero** criar e gerenciar atividades,  
@@ -228,7 +228,7 @@ Média | Medium
 
 ---
 
-### ✅ Critérios de Aceitação | Acceptance Criteria
+###  Critérios de Aceitação | Acceptance Criteria
 
 - O professor deve cadastrar atividades  
 - O sistema deve permitir edição e exclusão  
@@ -240,13 +240,13 @@ Média | Medium
 - The system must allow editing and deletion  
 - Students must view assigned activities  
 
-### 🔥 Prioridade | Priority
+###  Prioridade | Priority
 
 Alta | High
 
 ---
 
-# 🟣 US05 - Integração com Empresas | Company Integration
+#  US05 - Integração com Empresas | Company Integration
 
 **Como** empresa parceira,  
 **quero** divulgar oportunidades e desafios,  
@@ -260,7 +260,7 @@ Alta | High
 
 ---
 
-### ✅ Critérios de Aceitação | Acceptance Criteria
+###  Critérios de Aceitação | Acceptance Criteria
 
 - Empresas devem cadastrar oportunidades  
 - Alunos devem visualizar vagas e desafios  
@@ -272,13 +272,13 @@ Alta | High
 - Students must view jobs and challenges  
 - The system must register applications  
 
-### 🔥 Prioridade | Priority
+###  Prioridade | Priority
 
 Média | Medium
 
 ---
 
-# 📋 Regras de Negócio | Business Rules
+#  Regras de Negócio | Business Rules
 
 - Apenas usuários autenticados podem acessar funcionalidades internas  
 - Professores possuem permissões diferentes dos alunos  
@@ -296,16 +296,16 @@ Média | Medium
 
 ---
 
-# 🛠️ Tecnologias Utilizadas | Technologies Used
+#  Tecnologias Utilizadas | Technologies Used
 
-Frontend: React / Next.js
-Backend: Node.js
-Database: PostgreSQL
-Version Control: Git & GitHub
+- Frontend: Flutter
+- Backend: Dart
+- Database: MySQL
+- Version Control: Git & GitHub
 
 ---
 
-# 📂 Estrutura do Projeto | Project Structure
+#  Estrutura do Projeto | Project Structure
 
 ```bash
 📦 senac-devnest
@@ -318,7 +318,7 @@ Version Control: Git & GitHub
 
 ---
 
-# 👨‍💻 Equipe de Desenvolvimento | Development Team
+#  Equipe de Desenvolvimento | Development Team
 
 Projeto desenvolvido para fins acadêmicos no SENAC.
 
