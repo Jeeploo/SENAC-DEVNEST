@@ -298,10 +298,10 @@ Média | Medium
 
 #  Tecnologias Utilizadas | Technologies Used
 
-Frontend: Flutter
-Backend: Dart
-Database: MySQL
-Version Control: Git & GitHub
+- Frontend: Flutter
+- Backend: Dart
+- Database: MySQL
+- Version Control: Git & GitHub
 
 ---
 
