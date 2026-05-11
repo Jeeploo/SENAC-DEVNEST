@@ -1,0 +1,41 @@
+name: Deploy SENAC DevNest — Flutter Web
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:  # permite rodar manualmente
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+
+      - name: Instalar Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.27.0'
+          channel: 'stable'
+          cache: true
+
+      - name: Instalar dependências
+        run: flutter pub get
+        working-directory: ./frontend
+
+      - name: Build Flutter Web
+        run: |
+          flutter build web \
+            --release \
+            --web-renderer canvaskit \
+            --base-href "/${{ github.event.repository.name }}/"
+        working-directory: ./frontend
+
+      - name: Deploy no GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./frontend/build/web
+          force_orphan: true
+          commit_message: "Deploy ${{ github.sha }}"
