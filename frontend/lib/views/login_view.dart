@@ -45,28 +45,36 @@ class _LoginViewState extends State<LoginView> {
       backgroundColor: AppColors.background,
       body: Column(children: [
         _PublicNavBar(onLoginTap: () => setState(() => _state = _LoginState.selection)),
-        Expanded(child: SingleChildScrollView(child: Column(children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
-            child: Center(child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 280),
-              transitionBuilder: (child, anim) => FadeTransition(
-                opacity: anim, child: child),
-              child: _state == _LoginState.selection
-                  ? _SelectionCard(key: const ValueKey('sel'), onStudent: ()=>setState(()=>_state=_LoginState.studentLogin), onAdmin: ()=>setState(()=>_state=_LoginState.adminLogin), onVisitor: ()=>_goTo('/'))
-                  : _LoginCard(
-                      key: ValueKey(_state),
-                      isAdmin: _state == _LoginState.adminLogin,
-                      emailCtrl: _emailCtrl, passCtrl: _passCtrl,
-                      obscure: _obscure, loading: _loading, error: _error,
-                      onToggleObscure: () => setState(() => _obscure = !_obscure),
-                      onBack: () { setState(() { _state = _LoginState.selection; _error = null; _emailCtrl.clear(); _passCtrl.clear(); }); },
-                      onSubmit: () => _submit(_state == _LoginState.adminLogin ? '/admin' : '/student-panel'),
-                    ),
-            )),
+        Expanded(child: SingleChildScrollView(child: ConstrainedBox(
+          constraints: BoxConstraints(
+            minHeight: MediaQuery.of(context).size.height - 60,
           ),
-          const AppFooter(),
-        ]))),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+                child: Center(child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 280),
+                  transitionBuilder: (child, anim) => FadeTransition(
+                    opacity: anim, child: child),
+                  child: _state == _LoginState.selection
+                      ? _SelectionCard(key: const ValueKey('sel'), onStudent: ()=>setState(()=>_state=_LoginState.studentLogin), onAdmin: ()=>setState(()=>_state=_LoginState.adminLogin), onVisitor: ()=>_goTo('/'))
+                      : _LoginCard(
+                          key: ValueKey(_state),
+                          isAdmin: _state == _LoginState.adminLogin,
+                          emailCtrl: _emailCtrl, passCtrl: _passCtrl,
+                          obscure: _obscure, loading: _loading, error: _error,
+                          onToggleObscure: () => setState(() => _obscure = !_obscure),
+                          onBack: () { setState(() { _state = _LoginState.selection; _error = null; _emailCtrl.clear(); _passCtrl.clear(); }); },
+                          onSubmit: () => _submit(_state == _LoginState.adminLogin ? '/admin' : '/student-panel'),
+                        ),
+                )),
+              ),
+              const AppFooter(),
+            ],
+          ),
+        ))),
       ]),
     );
   }
