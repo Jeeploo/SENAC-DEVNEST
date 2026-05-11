@@ -3,7 +3,7 @@ name: Deploy SENAC DevNest — Flutter Web
 on:
   push:
     branches: [ main, master ]
-  workflow_dispatch:  # permite rodar manualmente
+  workflow_dispatch:
 
 jobs:
   build-and-deploy:
@@ -16,7 +16,7 @@ jobs:
       - name: Instalar Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.27.0'
+          flutter-version: '3.29.3'
           channel: 'stable'
           cache: true
 
