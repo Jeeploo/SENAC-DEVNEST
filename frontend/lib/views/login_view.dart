@@ -60,7 +60,7 @@ class _LoginViewState extends State<LoginView> {
             child: SingleChildScrollView(
               child: ConstrainedBox(
                 constraints: BoxConstraints(
-                  minHeight: MediaQuery.of(context).size.height - 60,
+                  minHeight: MediaQuery.of(context).size.height,
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,

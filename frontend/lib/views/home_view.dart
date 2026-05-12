@@ -188,7 +188,7 @@ class _HeroSectionState extends State<_HeroSection>
       }),
       child: SizedBox(
         width: double.infinity,
-        height: mobile ? null : 620,
+        height: mobile ? 520 : 620,
         child: Stack(
           fit: StackFit.expand,
           children: [
@@ -262,60 +262,62 @@ class _HeroSectionState extends State<_HeroSection>
 
             // ── LAYER 3: Badges tecnologia flutuantes (parallax 0.7x) ─────────
             if (!mobile) ...[
-              AnimatedBuilder(
-                animation: _floatAnim,
-                builder: (_, __) => Stack(
-                  children: [
-                    _techBadge(
-                      'Flutter',
-                      const Color(0xFF54C5F8),
-                      Icons.phone_iphone,
-                      dx: -dx * 0.7,
-                      dy: -dy * 0.7,
-                      top: 90,
-                      right: 340,
-                    ),
-                    _techBadge(
-                      'Dart',
-                      const Color(0xFF0175C2),
-                      Icons.code,
-                      dx: -dx * 0.65,
-                      dy: -dy * 0.65,
-                      top: 175,
-                      right: 160,
-                      floatOffset: _floatAnim.value * 12 - 6,
-                    ),
-                    _techBadge(
-                      'MySQL',
-                      const Color(0xFF4479A1),
-                      Icons.storage,
-                      dx: -dx * 0.8,
-                      dy: -dy * 0.8,
-                      top: 290,
-                      right: 380,
-                      floatOffset: _floatAnim.value * -8 + 4,
-                    ),
-                    _techBadge(
-                      'GitHub',
-                      Colors.white70,
-                      Icons.hub,
-                      dx: -dx * 0.6,
-                      dy: -dy * 0.6,
-                      top: 390,
-                      right: 220,
-                      floatOffset: _floatAnim.value * 10 - 5,
-                    ),
-                    _techBadge(
-                      'Flutter Web',
-                      AppColors.primary,
-                      Icons.web,
-                      dx: -dx * 0.75,
-                      dy: -dy * 0.75,
-                      top: 480,
-                      right: 350,
-                      floatOffset: _floatAnim.value * -6 + 3,
-                    ),
-                  ],
+              Positioned.fill(
+                child: AnimatedBuilder(
+                  animation: _floatAnim,
+                  builder: (_, __) => Stack(
+                    children: [
+                      _techBadge(
+                        'Flutter',
+                        const Color(0xFF54C5F8),
+                        Icons.phone_iphone,
+                        dx: -dx * 0.7,
+                        dy: -dy * 0.7,
+                        top: 90,
+                        right: 340,
+                      ),
+                      _techBadge(
+                        'Dart',
+                        const Color(0xFF0175C2),
+                        Icons.code,
+                        dx: -dx * 0.65,
+                        dy: -dy * 0.65,
+                        top: 175,
+                        right: 160,
+                        floatOffset: _floatAnim.value * 12 - 6,
+                      ),
+                      _techBadge(
+                        'MySQL',
+                        const Color(0xFF4479A1),
+                        Icons.storage,
+                        dx: -dx * 0.8,
+                        dy: -dy * 0.8,
+                        top: 290,
+                        right: 380,
+                        floatOffset: _floatAnim.value * -8 + 4,
+                      ),
+                      _techBadge(
+                        'GitHub',
+                        Colors.white70,
+                        Icons.hub,
+                        dx: -dx * 0.6,
+                        dy: -dy * 0.6,
+                        top: 390,
+                        right: 220,
+                        floatOffset: _floatAnim.value * 10 - 5,
+                      ),
+                      _techBadge(
+                        'Flutter Web',
+                        AppColors.primary,
+                        Icons.web,
+                        dx: -dx * 0.75,
+                        dy: -dy * 0.75,
+                        top: 480,
+                        right: 350,
+                        floatOffset: _floatAnim.value * -6 + 3,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -535,6 +537,22 @@ class _HeroSectionState extends State<_HeroSection>
                             ),
                           ],
                         ),
+                        SizedBox(height: mobile ? 28 : 36),
+
+                        // Mini stats — preenche espaço e reforça credibilidade
+                        Wrap(
+                          spacing: 0,
+                          runSpacing: 12,
+                          children: [
+                            _MiniStat(value: '150+', label: 'Projetos'),
+                            _MiniDivider(),
+                            _MiniStat(value: '500+', label: 'Alunos'),
+                            _MiniDivider(),
+                            _MiniStat(value: '20+', label: 'Turmas'),
+                            _MiniDivider(),
+                            _MiniStat(value: '15', label: 'Premiados'),
+                          ],
+                        ),
                       ],
                     ),
                   ),
@@ -664,6 +682,51 @@ class _ParticlePainter extends CustomPainter {
   bool shouldRepaint(_ParticlePainter old) => old.t != t;
 }
 
+// ─── MINI STATS (hero) ────────────────────────────────────────────────────────
+class _MiniStat extends StatelessWidget {
+  final String value, label;
+  const _MiniStat({required this.value, required this.label});
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          value,
+          style: const TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.w900,
+            color: Colors.white,
+            height: 1.1,
+          ),
+        ),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 11,
+            color: Colors.white.withValues(alpha: 0.55),
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+class _MiniDivider extends StatelessWidget {
+  const _MiniDivider();
+  @override
+  Widget build(BuildContext context) => Container(
+    width: 1,
+    height: 36,
+    margin: const EdgeInsets.symmetric(vertical: 4),
+    color: Colors.white.withValues(alpha: 0.15),
+  );
+}
+
 // ─── STATS SECTION ────────────────────────────────────────────────────────────
 class _StatsSection extends StatelessWidget {
   const _StatsSection();
@@ -710,13 +773,23 @@ class _StatsSection extends StatelessWidget {
           constraints: const BoxConstraints(maxWidth: 1200),
           child: mobile
               ? Column(
-                  children:
-                      _stats
-                          .map(_buildCard)
-                          .toList()
-                          .expand((w) => [w, const SizedBox(height: 16)])
-                          .toList()
-                        ..removeLast(),
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(child: _buildCard(_stats[0])),
+                        const SizedBox(width: 12),
+                        Expanded(child: _buildCard(_stats[1])),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        Expanded(child: _buildCard(_stats[2])),
+                        const SizedBox(width: 12),
+                        Expanded(child: _buildCard(_stats[3])),
+                      ],
+                    ),
+                  ],
                 )
               : Row(
                   children:
@@ -1452,7 +1525,6 @@ class _StatHoverCardState extends State<_StatHoverCard> {
 /// Botão filled com escala + shadow suaves no hover
 class _HoverFilledButton extends StatefulWidget {
   final String label;
-  final IconData? icon;
   final Color color;
   final VoidCallback onTap;
   final EdgeInsets? padding;
@@ -1460,7 +1532,6 @@ class _HoverFilledButton extends StatefulWidget {
 
   const _HoverFilledButton({
     required this.label,
-    this.icon,
     required this.color,
     required this.onTap,
     this.padding,
@@ -1518,15 +1589,6 @@ class _HoverFilledButtonState extends State<_HoverFilledButton> {
                     color: Colors.white,
                   ),
                 ),
-                if (widget.icon != null) ...[
-                  const SizedBox(width: 8),
-                  AnimatedSlide(
-                    offset: _hovered ? const Offset(0.15, 0) : Offset.zero,
-                    duration: const Duration(milliseconds: 180),
-                    curve: Curves.easeOutCubic,
-                    child: Icon(widget.icon, size: 16, color: Colors.white),
-                  ),
-                ],
               ],
             ),
           ),
@@ -1596,7 +1658,7 @@ class _HoverCard extends StatefulWidget {
   final Widget child;
   final EdgeInsets? padding;
 
-  const _HoverCard(this.padding, {required this.child});
+  const _HoverCard({required this.child, this.padding});
 
   @override
   State<_HoverCard> createState() => _HoverCardState();
