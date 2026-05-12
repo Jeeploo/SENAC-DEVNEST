@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import '../models/project.dart';
 import '../theme/app_colors.dart';
+import '../services/app_services.dart';
+import '../services/ai_analysis_service.dart';
 import 'shared_widgets.dart';
 
-enum _DialogState { view, approving, rejecting }
+enum _DialogState { view, approving, rejecting, analyzing }
 
 class ProjectDetailDialog extends StatefulWidget {
   final Project project;
@@ -42,6 +44,8 @@ class _ProjectDetailDialogState extends State<ProjectDetailDialog> {
   _DialogState _state = _DialogState.view;
   final _feedbackController = TextEditingController();
   bool _loading = false;
+  ProjectAnalysis? _aiResult;
+  bool _aiLoading = false;
 
   Project get p => widget.project;
 
@@ -49,6 +53,26 @@ class _ProjectDetailDialogState extends State<ProjectDetailDialog> {
   void dispose() {
     _feedbackController.dispose();
     super.dispose();
+  }
+
+  Future<void> _analyzeWithAi() async {
+    setState(() {
+      _state = _DialogState.analyzing;
+      _aiLoading = true;
+      _aiResult = null;
+    });
+    final techs = _techChips;
+    final result = await AppServices.ai.analyzeProject(
+      title: p.title,
+      description: p.description,
+      technologies: techs,
+      classGroup: p.classGroupName ?? '',
+    );
+    if (mounted)
+      setState(() {
+        _aiResult = result;
+        _aiLoading = false;
+      });
   }
 
   Future<void> _confirmApprove() async {
@@ -67,8 +91,19 @@ class _ProjectDetailDialogState extends State<ProjectDetailDialog> {
   // Formata data: "21 de abril de 2024"
   String _formatDate(DateTime dt) {
     const months = [
-      '', 'janeiro', 'fevereiro', 'marco', 'abril', 'maio', 'junho',
-      'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'
+      '',
+      'janeiro',
+      'fevereiro',
+      'marco',
+      'abril',
+      'maio',
+      'junho',
+      'julho',
+      'agosto',
+      'setembro',
+      'outubro',
+      'novembro',
+      'dezembro',
     ];
     return '${dt.day} de ${months[dt.month]} de ${dt.year}';
   }
@@ -116,8 +151,10 @@ class _ProjectDetailDialogState extends State<ProjectDetailDialog> {
                     const SizedBox(height: 20),
                     _buildDate(),
                     const SizedBox(height: 24),
-                    if (_state == _DialogState.approving) _buildApproveConfirm(),
+                    if (_state == _DialogState.approving)
+                      _buildApproveConfirm(),
                     if (_state == _DialogState.rejecting) _buildRejectForm(),
+                    if (_state == _DialogState.analyzing) _buildAiAnalysis(),
                     const SizedBox(height: 8),
                   ],
                 ),
@@ -140,15 +177,22 @@ class _ProjectDetailDialogState extends State<ProjectDetailDialog> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
-              child: Text(p.title,
-                  style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.textPrimary)),
+              child: Text(
+                p.title,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.textPrimary,
+                ),
+              ),
             ),
             IconButton(
               onPressed: () => Navigator.pop(context),
-              icon: const Icon(Icons.close, size: 20, color: AppColors.textMuted),
+              icon: const Icon(
+                Icons.close,
+                size: 20,
+                color: AppColors.textMuted,
+              ),
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints(),
             ),
@@ -159,16 +203,22 @@ class _ProjectDetailDialogState extends State<ProjectDetailDialog> {
           spacing: 8,
           crossAxisAlignment: WrapCrossAlignment.center,
           children: [
-            Text(p.studentName ?? '-',
-                style: const TextStyle(
-                    fontSize: 13, color: AppColors.textSecondary)),
-            const Text('·',
-                style: TextStyle(color: AppColors.textMuted)),
-            Text(p.classGroupName ?? '-',
-                style: const TextStyle(
-                    fontSize: 13, color: AppColors.textSecondary)),
-            const Text('·',
-                style: TextStyle(color: AppColors.textMuted)),
+            Text(
+              p.studentName ?? '-',
+              style: const TextStyle(
+                fontSize: 13,
+                color: AppColors.textSecondary,
+              ),
+            ),
+            const Text('·', style: TextStyle(color: AppColors.textMuted)),
+            Text(
+              p.classGroupName ?? '-',
+              style: const TextStyle(
+                fontSize: 13,
+                color: AppColors.textSecondary,
+              ),
+            ),
+            const Text('·', style: TextStyle(color: AppColors.textMuted)),
             StatusBadge(p.status),
           ],
         ),
@@ -181,11 +231,14 @@ class _ProjectDetailDialogState extends State<ProjectDetailDialog> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Descricao do Projeto',
-            style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w700,
-                color: AppColors.textPrimary)),
+        const Text(
+          'Descricao do Projeto',
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w700,
+            color: AppColors.textPrimary,
+          ),
+        ),
         const SizedBox(height: 10),
         Container(
           width: double.infinity,
@@ -195,11 +248,14 @@ class _ProjectDetailDialogState extends State<ProjectDetailDialog> {
             borderRadius: BorderRadius.circular(10),
             border: Border.all(color: AppColors.border),
           ),
-          child: Text(p.description,
-              style: const TextStyle(
-                  fontSize: 13,
-                  color: AppColors.textSecondary,
-                  height: 1.6)),
+          child: Text(
+            p.description,
+            style: const TextStyle(
+              fontSize: 13,
+              color: AppColors.textSecondary,
+              height: 1.6,
+            ),
+          ),
         ),
       ],
     );
@@ -210,14 +266,19 @@ class _ProjectDetailDialogState extends State<ProjectDetailDialog> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: const [
-        Text('Coorientador',
-            style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w700,
-                color: AppColors.textPrimary)),
+        Text(
+          'Coorientador',
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w700,
+            color: AppColors.textPrimary,
+          ),
+        ),
         SizedBox(height: 6),
-        Text('Prof. Heuryk Wylk',
-            style: TextStyle(fontSize: 13, color: AppColors.textSecondary)),
+        Text(
+          'Prof. Heuryk Wylk',
+          style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
+        ),
       ],
     );
   }
@@ -228,38 +289,51 @@ class _ProjectDetailDialogState extends State<ProjectDetailDialog> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Tecnologias Utilizadas',
-            style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w700,
-                color: AppColors.textPrimary)),
+        const Text(
+          'Tecnologias Utilizadas',
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w700,
+            color: AppColors.textPrimary,
+          ),
+        ),
         const SizedBox(height: 10),
         Wrap(
           spacing: 8,
           runSpacing: 8,
           children: _techChips
-              .map((tech) => Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 5),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFF3F0FF),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: const Color(0xFFD4C8FF)),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(Icons.diamond_outlined,
-                            size: 12, color: Color(0xFF7C3AED)),
-                        const SizedBox(width: 4),
-                        Text(tech,
-                            style: const TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                                color: Color(0xFF7C3AED))),
-                      ],
-                    ),
-                  ))
+              .map(
+                (tech) => Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 5,
+                  ),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF3F0FF),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: const Color(0xFFD4C8FF)),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(
+                        Icons.diamond_outlined,
+                        size: 12,
+                        color: Color(0xFF7C3AED),
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        tech,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          color: Color(0xFF7C3AED),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              )
               .toList(),
         ),
       ],
@@ -268,7 +342,8 @@ class _ProjectDetailDialogState extends State<ProjectDetailDialog> {
 
   // ─── REPOSITÓRIO ───────────────────────────────────────────────────────────
   Widget _buildRepository() {
-    if (p.githubLink == null || p.githubLink!.isEmpty) return const SizedBox.shrink();
+    if (p.githubLink == null || p.githubLink!.isEmpty)
+      return const SizedBox.shrink();
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
@@ -280,12 +355,12 @@ class _ProjectDetailDialogState extends State<ProjectDetailDialog> {
           const Icon(Icons.code, size: 16, color: AppColors.textSecondary),
           const SizedBox(width: 10),
           const Expanded(
-            child: Text('Repositorio',
-                style: TextStyle(
-                    fontSize: 13, color: AppColors.textSecondary)),
+            child: Text(
+              'Repositorio',
+              style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
+            ),
           ),
-          const Icon(Icons.open_in_new,
-              size: 14, color: AppColors.textMuted),
+          const Icon(Icons.open_in_new, size: 14, color: AppColors.textMuted),
         ],
       ),
     );
@@ -296,15 +371,19 @@ class _ProjectDetailDialogState extends State<ProjectDetailDialog> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Data de Submissao',
-            style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w700,
-                color: AppColors.textPrimary)),
+        const Text(
+          'Data de Submissao',
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w700,
+            color: AppColors.textPrimary,
+          ),
+        ),
         const SizedBox(height: 6),
-        Text(_formatDate(p.createdAt),
-            style: const TextStyle(
-                fontSize: 13, color: AppColors.textSecondary)),
+        Text(
+          _formatDate(p.createdAt),
+          style: const TextStyle(fontSize: 13, color: AppColors.textSecondary),
+        ),
       ],
     );
   }
@@ -321,25 +400,33 @@ class _ProjectDetailDialogState extends State<ProjectDetailDialog> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(Icons.check_circle_outline,
-              color: AppColors.statusApprovedFg, size: 20),
+          const Icon(
+            Icons.check_circle_outline,
+            color: AppColors.statusApprovedFg,
+            size: 20,
+          ),
           const SizedBox(width: 12),
           const Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Confirmar Aprovacao',
-                    style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.statusApprovedFg)),
+                Text(
+                  'Confirmar Aprovacao',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.statusApprovedFg,
+                  ),
+                ),
                 SizedBox(height: 4),
                 Text(
-                    'Este projeto sera publicado na vitrine do Observatorio PI e ficara visivel para todos.',
-                    style: TextStyle(
-                        fontSize: 12,
-                        color: AppColors.statusApprovedFg,
-                        height: 1.5)),
+                  'Este projeto sera publicado na vitrine do Observatorio PI e ficara visivel para todos.',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: AppColors.statusApprovedFg,
+                    height: 1.5,
+                  ),
+                ),
               ],
             ),
           ),
@@ -363,25 +450,33 @@ class _ProjectDetailDialogState extends State<ProjectDetailDialog> {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Icon(Icons.warning_amber_outlined,
-                  color: AppColors.statusRejectedFg, size: 20),
+              const Icon(
+                Icons.warning_amber_outlined,
+                color: AppColors.statusRejectedFg,
+                size: 20,
+              ),
               const SizedBox(width: 12),
               const Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Justificativa da Reprovacao',
-                        style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.statusRejectedFg)),
+                    Text(
+                      'Justificativa da Reprovacao',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.statusRejectedFg,
+                      ),
+                    ),
                     SizedBox(height: 4),
                     Text(
-                        'Esta justificativa sera enviada ao aluno para que ele possa revisar e resubmeter o projeto.',
-                        style: TextStyle(
-                            fontSize: 12,
-                            color: AppColors.statusRejectedFg,
-                            height: 1.5)),
+                      'Esta justificativa sera enviada ao aluno para que ele possa revisar e resubmeter o projeto.',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: AppColors.statusRejectedFg,
+                        height: 1.5,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -397,7 +492,9 @@ class _ProjectDetailDialogState extends State<ProjectDetailDialog> {
             hintText:
                 'Descreva os motivos da reprovacao e as melhorias necessarias...',
             hintStyle: const TextStyle(
-                fontSize: 13, color: AppColors.textMuted),
+              fontSize: 13,
+              color: AppColors.textMuted,
+            ),
             filled: true,
             fillColor: AppColors.surface,
             border: OutlineInputBorder(
@@ -419,52 +516,325 @@ class _ProjectDetailDialogState extends State<ProjectDetailDialog> {
     );
   }
 
+  // ─── ANÁLISE COM IA ────────────────────────────────────────────────────────
+  Widget _buildAiAnalysis() {
+    if (_aiLoading) {
+      return Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF0F4FF),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: const Color(0xFFBBCCFF)),
+        ),
+        child: const Column(
+          children: [
+            CircularProgressIndicator(color: Color(0xFF1A237E)),
+            SizedBox(height: 16),
+            Text(
+              'A IA está analisando o projeto...',
+              style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
+            ),
+            SizedBox(height: 4),
+            Text(
+              'Avaliando tecnologias, descrição e complexidade',
+              style: TextStyle(fontSize: 11, color: AppColors.textMuted),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      );
+    }
+    if (_aiResult == null) return const SizedBox.shrink();
+    final r = _aiResult!;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Score card
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [Color(0xFF1A237E), Color(0xFF00ACC1)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(14),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '${r.score.toStringAsFixed(1)}/10',
+                      style: const TextStyle(
+                        fontSize: 32,
+                        fontWeight: FontWeight.w900,
+                        color: Colors.white,
+                      ),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(top: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 3,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Text(
+                        r.badge,
+                        style: const TextStyle(
+                          fontSize: 11,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    'Complexidade: ${r.complexity}',
+                    style: const TextStyle(fontSize: 11, color: Colors.white70),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '${_techChips.length} tecnologias',
+                    style: const TextStyle(fontSize: 11, color: Colors.white70),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 14),
+        // Resumo
+        Container(
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: const Color(0xFFF0F4FF),
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: const Color(0xFFBBCCFF)),
+          ),
+          child: Text(
+            r.summary,
+            style: const TextStyle(
+              fontSize: 12,
+              color: Color(0xFF1A237E),
+              height: 1.6,
+            ),
+          ),
+        ),
+        const SizedBox(height: 14),
+        // Pontos fortes
+        const Text(
+          'Pontos Fortes',
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w700,
+            color: AppColors.textPrimary,
+          ),
+        ),
+        const SizedBox(height: 8),
+        ...r.strengths.map(
+          (s) => Padding(
+            padding: const EdgeInsets.only(bottom: 6),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Icon(
+                  Icons.check_circle,
+                  color: Color(0xFF2E7D32),
+                  size: 15,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    s,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: AppColors.textSecondary,
+                      height: 1.5,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 10),
+        // Sugestões
+        const Text(
+          'Sugestões de Melhoria',
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w700,
+            color: AppColors.textPrimary,
+          ),
+        ),
+        const SizedBox(height: 8),
+        ...r.improvements.map(
+          (s) => Padding(
+            padding: const EdgeInsets.only(bottom: 6),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Icon(
+                  Icons.arrow_forward_ios,
+                  color: Color(0xFFF57F17),
+                  size: 11,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    s,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: AppColors.textSecondary,
+                      height: 1.5,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 10),
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: AppColors.background,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: const Text(
+            'Análise gerada por IA — use como suporte à avaliação, não como nota definitiva.',
+            style: TextStyle(fontSize: 10, color: AppColors.textMuted),
+            textAlign: TextAlign.center,
+          ),
+        ),
+      ],
+    );
+  }
+
   // ─── RODAPÉ (botões) ────────────────────────────────────────────────────────
   Widget _buildFooter() {
     return Container(
       padding: const EdgeInsets.all(20),
       child: Column(
         children: [
+          // Botão IA — sempre visível no estado view
+          if (_state == _DialogState.view) ...[
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: _analyzeWithAi,
+                icon: const Icon(Icons.auto_awesome, size: 16),
+                label: const Text(
+                  'Analisar com IA',
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF1A237E),
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  padding: const EdgeInsets.symmetric(vertical: 13),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 10),
+          ],
+
+          // Botão voltar quando analisando
+          if (_state == _DialogState.analyzing) ...[
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                onPressed: () => setState(() => _state = _DialogState.view),
+                icon: const Icon(Icons.arrow_back, size: 16),
+                label: const Text('Voltar', style: TextStyle(fontSize: 14)),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: AppColors.textSecondary,
+                  side: const BorderSide(color: AppColors.border),
+                  padding: const EdgeInsets.symmetric(vertical: 13),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 10),
+          ],
+
           // Botões de ação por estado
-          if (_state == _DialogState.view && p.status == ProjectStatus.submitted)
+          if (_state == _DialogState.view &&
+              p.status == ProjectStatus.submitted)
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Selecione uma acao para este projeto:',
-                    style: TextStyle(fontSize: 12, color: AppColors.textSecondary)),
+                const Text(
+                  'Selecione uma acao para este projeto:',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: AppColors.textSecondary,
+                  ),
+                ),
                 const SizedBox(height: 10),
                 Row(
                   children: [
                     Expanded(
                       child: ElevatedButton.icon(
-                        onPressed: () => setState(() => _state = _DialogState.approving),
+                        onPressed: () =>
+                            setState(() => _state = _DialogState.approving),
                         icon: const Icon(Icons.check_circle_outline, size: 16),
-                        label: const Text('Aprovar',
-                            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+                        label: const Text(
+                          'Aprovar',
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.statusApprovedFg,
                           foregroundColor: Colors.white,
                           elevation: 0,
                           padding: const EdgeInsets.symmetric(vertical: 12),
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8)),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
                         ),
                       ),
                     ),
                     const SizedBox(width: 10),
                     Expanded(
                       child: ElevatedButton.icon(
-                        onPressed: () => setState(() => _state = _DialogState.rejecting),
+                        onPressed: () =>
+                            setState(() => _state = _DialogState.rejecting),
                         icon: const Icon(Icons.cancel_outlined, size: 16),
-                        label: const Text('Reprovar',
-                            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+                        label: const Text(
+                          'Reprovar',
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.statusRejectedFg,
                           foregroundColor: Colors.white,
                           elevation: 0,
                           padding: const EdgeInsets.symmetric(vertical: 12),
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8)),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
                         ),
                       ),
                     ),
@@ -481,20 +851,29 @@ class _ProjectDetailDialogState extends State<ProjectDetailDialog> {
                     onPressed: _loading ? null : _confirmApprove,
                     icon: _loading
                         ? const SizedBox(
-                            width: 16, height: 16,
+                            width: 16,
+                            height: 16,
                             child: CircularProgressIndicator(
-                                strokeWidth: 2, color: Colors.white))
+                              strokeWidth: 2,
+                              color: Colors.white,
+                            ),
+                          )
                         : const Icon(Icons.check_circle_outline, size: 18),
-                    label: const Text('Confirmar Aprovacao',
-                        style: TextStyle(
-                            fontSize: 14, fontWeight: FontWeight.w600)),
+                    label: const Text(
+                      'Confirmar Aprovacao',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.statusApprovedFg,
                       foregroundColor: Colors.white,
                       elevation: 0,
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                     ),
                   ),
                 ),
@@ -503,14 +882,21 @@ class _ProjectDetailDialogState extends State<ProjectDetailDialog> {
                   onPressed: () => setState(() => _state = _DialogState.view),
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 14),
+                      horizontal: 20,
+                      vertical: 14,
+                    ),
                     side: const BorderSide(color: AppColors.border),
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
-                  child: const Text('Cancelar',
-                      style: TextStyle(
-                          fontSize: 14, color: AppColors.textSecondary)),
+                  child: const Text(
+                    'Cancelar',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -524,20 +910,29 @@ class _ProjectDetailDialogState extends State<ProjectDetailDialog> {
                     onPressed: _loading ? null : _confirmReject,
                     icon: _loading
                         ? const SizedBox(
-                            width: 16, height: 16,
+                            width: 16,
+                            height: 16,
                             child: CircularProgressIndicator(
-                                strokeWidth: 2, color: Colors.white))
+                              strokeWidth: 2,
+                              color: Colors.white,
+                            ),
+                          )
                         : const Icon(Icons.cancel_outlined, size: 18),
-                    label: const Text('Confirmar Reprovacao',
-                        style: TextStyle(
-                            fontSize: 14, fontWeight: FontWeight.w600)),
+                    label: const Text(
+                      'Confirmar Reprovacao',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.statusRejectedFg,
                       foregroundColor: Colors.white,
                       elevation: 0,
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                     ),
                   ),
                 ),
@@ -546,14 +941,21 @@ class _ProjectDetailDialogState extends State<ProjectDetailDialog> {
                   onPressed: () => setState(() => _state = _DialogState.view),
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 14),
+                      horizontal: 20,
+                      vertical: 14,
+                    ),
                     side: const BorderSide(color: AppColors.border),
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
-                  child: const Text('Cancelar',
-                      style: TextStyle(
-                          fontSize: 14, color: AppColors.textSecondary)),
+                  child: const Text(
+                    'Cancelar',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -569,11 +971,13 @@ class _ProjectDetailDialogState extends State<ProjectDetailDialog> {
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 side: const BorderSide(color: AppColors.border),
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10)),
+                  borderRadius: BorderRadius.circular(10),
+                ),
               ),
-              child: const Text('Fechar',
-                  style: TextStyle(
-                      fontSize: 14, color: AppColors.textSecondary)),
+              child: const Text(
+                'Fechar',
+                style: TextStyle(fontSize: 14, color: AppColors.textSecondary),
+              ),
             ),
           ),
         ],

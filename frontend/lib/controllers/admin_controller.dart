@@ -31,7 +31,7 @@ class AdminController extends ChangeNotifier {
   int get totalSubmissions =>
       _projects.where((p) => p.status != ProjectStatus.draft).length;
 
-  int get totalPending   => _pending.length;
+  int get totalPending => _pending.length;
   int get totalEvaluated => _evaluated.length;
 
   void setFilter(AdminFilter filter) {
@@ -47,7 +47,7 @@ class AdminController extends ChangeNotifier {
     notifyListeners();
   }
 
-  // TODO: PUT /projects/:id/status + POST /evaluations { grade < 6 }
+  //TODO: PUT /projects/:id/status + POST /evaluations { grade < 6 }
   Future<void> rejectProject(Project project) async {
     final index = _projects.indexWhere((p) => p.id == project.id);
     if (index == -1) return;

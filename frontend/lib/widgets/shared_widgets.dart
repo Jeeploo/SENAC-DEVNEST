@@ -1,31 +1,55 @@
 import 'package:flutter/material.dart';
+import '../utils/app_session.dart';
 import '../models/project.dart';
 import '../theme/app_colors.dart';
 import '../utils/responsive.dart';
 
 // ─── ROTAS ───────────────────────────────────────────────────────────────────
-const _kRouteMap = {
-  'Inicio':      '/',
-  'Networking':  '/networking',
-  'Feedbacks':   '/feedbacks',
-  'Dashboard':    '/dashboard',
-  'Painel Aluno': '/student-panel',
-  'Painel ADM':  '/admin',
+const _kAllRoutes = {
+  'Início': '/',
+  'Dashboard Geral': '/dashboard',
+  'Networking': '/networking',
+  'Feedbacks': '/feedbacks',
+  'Meu Painel': '/student-panel',
+  'Painel Admin': '/admin',
+  'Cadastrar': '/cadastro',
 };
+
+// Links dinâmicos baseados no perfil logado
+List<String> _navLinks() {
+  final links = <String>['Início', 'Dashboard Geral', 'Networking'];
+  // Empresa não recebe feedback — apenas aluno, professor e coordenador
+  if (!AppSession.isEmpresa) {
+    links.add('Feedbacks');
+  }
+  if (AppSession.isAluno) {
+    links.add('Meu Painel');
+  }
+  if (AppSession.isAdmin || AppSession.isProfessor) {
+    links.add('Painel Admin');
+  }
+  if (AppSession.isAdmin) {
+    links.add('Cadastrar');
+  }
+  return links;
+}
+
+void _logout(BuildContext context) {
+  AppSession.logout();
+  Navigator.pushReplacementNamed(context, '/login');
+}
 
 // ─── NAVBAR ──────────────────────────────────────────────────────────────────
 class AppNavBar extends StatelessWidget implements PreferredSizeWidget {
   const AppNavBar({super.key});
 
-  static const _links = [
-    'Inicio', 'Dashboard', 'Networking', 'Feedbacks', 'Painel Aluno', 'Painel ADM',
-  ];
+  List<String> get _links => _navLinks();
 
   @override
   Size get preferredSize => const Size.fromHeight(60);
 
   void _navigate(BuildContext context, String label) {
-    final route = _kRouteMap[label];
+    final route = _kAllRoutes[label];
     if (route == null) return;
     Navigator.pushReplacementNamed(context, route);
   }
@@ -55,7 +79,7 @@ class AppNavBar extends StatelessWidget implements PreferredSizeWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: _links.map((l) {
-                    final route = _kRouteMap[l];
+                    final route = _kAllRoutes[l];
                     final isActive = route != null && route == currentRoute;
                     return Padding(
                       padding: const EdgeInsets.only(right: 28),
@@ -68,18 +92,25 @@ class AppNavBar extends StatelessWidget implements PreferredSizeWidget {
                             decoration: isActive
                                 ? const BoxDecoration(
                                     border: Border(
-                                        bottom: BorderSide(
-                                            color: AppColors.primary, width: 2)))
+                                      bottom: BorderSide(
+                                        color: AppColors.primary,
+                                        width: 2,
+                                      ),
+                                    ),
+                                  )
                                 : null,
-                            child: Text(l,
-                                style: TextStyle(
-                                    fontSize: 13,
-                                    fontWeight: isActive
-                                        ? FontWeight.w600
-                                        : FontWeight.w400,
-                                    color: isActive
-                                        ? AppColors.secondary
-                                        : AppColors.textSecondary)),
+                            child: Text(
+                              l,
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: isActive
+                                    ? FontWeight.w600
+                                    : FontWeight.w400,
+                                color: isActive
+                                    ? AppColors.secondary
+                                    : AppColors.textSecondary,
+                              ),
+                            ),
                           ),
                         ),
                       ),
@@ -90,12 +121,12 @@ class AppNavBar extends StatelessWidget implements PreferredSizeWidget {
             ),
             const Icon(Icons.search, color: AppColors.textSecondary, size: 22),
             const SizedBox(width: 16),
-            _ctaButton(),
+            _ctaButton(context),
           ] else if (Responsive.isTablet(context)) ...[
             const Spacer(),
             const Icon(Icons.search, color: AppColors.textSecondary, size: 22),
             const SizedBox(width: 12),
-            _ctaButton(),
+            _ctaButton(context),
             const SizedBox(width: 8),
             _menuButton(context),
           ] else ...[
@@ -123,33 +154,57 @@ class AppNavBar extends StatelessWidget implements PreferredSizeWidget {
             borderRadius: BorderRadius.circular(8),
           ),
           alignment: Alignment.center,
-          child: const Text('SD',
-              style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w800,
-                  fontSize: 13)),
+          child: const Text(
+            'SD',
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w800,
+              fontSize: 13,
+            ),
+          ),
         ),
         const SizedBox(width: 10),
         const Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('SENAC DevNest',
-                style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.textPrimary)),
-            Text('Projetos Integradores',
-                style: TextStyle(fontSize: 10, color: AppColors.textMuted)),
+            Text(
+              'SENAC DevNest',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+                color: AppColors.textPrimary,
+              ),
+            ),
+            Text(
+              'Projetos Integradores',
+              style: TextStyle(fontSize: 10, color: AppColors.textMuted),
+            ),
           ],
         ),
       ],
     );
   }
 
-  Widget _ctaButton() {
+  Widget _ctaButton(BuildContext context) {
+    if (AppSession.isLoggedIn) {
+      return OutlinedButton.icon(
+        onPressed: () => _logout(context),
+        icon: const Icon(Icons.logout, size: 16),
+        label: const Text(
+          'Sair',
+          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+        ),
+        style: OutlinedButton.styleFrom(
+          foregroundColor: AppColors.statusRejectedFg,
+          side: const BorderSide(color: Color(0xFFF4B8B8)),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        ),
+      );
+    }
     return ElevatedButton(
-      onPressed: () {},
+      onPressed: () => Navigator.pushReplacementNamed(context, '/login'),
       style: ElevatedButton.styleFrom(
         backgroundColor: AppColors.accent,
         foregroundColor: Colors.white,
@@ -157,8 +212,10 @@ class AppNavBar extends StatelessWidget implements PreferredSizeWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
-      child: const Text('Enviar Projeto',
-          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+      child: const Text(
+        'Entrar / Cadastrar',
+        style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+      ),
     );
   }
 
@@ -174,14 +231,33 @@ class AppNavBar extends StatelessWidget implements PreferredSizeWidget {
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
 
-  static const _links = [
-    ('Inicio',      Icons.home_outlined,      '/'),
-    ('Dashboard',   Icons.dashboard_outlined,  '/dashboard'),
-    ('Networking',  Icons.people_outline,      '/networking'),
-    ('Feedbacks',   Icons.feedback_outlined,   '/feedbacks'),
-    ('Painel Aluno',Icons.school_outlined,     '/student-panel'),
-    ('Painel ADM',  Icons.shield_outlined,     '/admin'),
+  static const _baseLinks = [
+    ('Início', Icons.home_outlined, '/'),
+    ('Dashboard', Icons.dashboard_outlined, '/dashboard'),
+    ('Networking', Icons.people_outline, '/networking'),
+    ('Feedbacks', Icons.feedback_outlined, '/feedbacks'),
   ];
+
+  List<(String, IconData, String)> get _drawerLinks {
+    final base = <(String, IconData, String)>[
+      ('Início', Icons.home_outlined, '/'),
+      ('Dashboard', Icons.dashboard_outlined, '/dashboard'),
+      ('Networking', Icons.people_outline, '/networking'),
+    ];
+    if (!AppSession.isEmpresa) {
+      base.add(('Feedbacks', Icons.feedback_outlined, '/feedbacks'));
+    }
+    if (AppSession.isAluno) {
+      base.add(('Meu Painel', Icons.school_outlined, '/student-panel'));
+    }
+    if (AppSession.isAdmin || AppSession.isProfessor) {
+      base.add(('Painel Admin', Icons.shield_outlined, '/admin'));
+    }
+    if (AppSession.isAdmin) {
+      base.add(('Cadastrar', Icons.person_add, '/cadastro'));
+    }
+    return base;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -208,34 +284,45 @@ class AppDrawer extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     alignment: Alignment.center,
-                    child: const Text('SD',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w800,
-                            fontSize: 13)),
+                    child: const Text(
+                      'SD',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w800,
+                        fontSize: 13,
+                      ),
+                    ),
                   ),
                   const SizedBox(width: 10),
-                  const Text('SENAC DevNest',
-                      style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.textPrimary)),
+                  const Text(
+                    'SENAC DevNest',
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
                 ],
               ),
             ),
             const Divider(height: 1, color: AppColors.border),
             const SizedBox(height: 8),
-            ..._links.map((item) {
+            ..._drawerLinks.map((item) {
               final isActive = item.$3.isNotEmpty && item.$3 == currentRoute;
               return ListTile(
-                leading: Icon(item.$2,
-                    color: isActive ? AppColors.primary : AppColors.textSecondary,
-                    size: 20),
-                title: Text(item.$1,
-                    style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
-                        color: isActive ? AppColors.primary : AppColors.textPrimary)),
+                leading: Icon(
+                  item.$2,
+                  color: isActive ? AppColors.primary : AppColors.textSecondary,
+                  size: 20,
+                ),
+                title: Text(
+                  item.$1,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
+                    color: isActive ? AppColors.primary : AppColors.textPrimary,
+                  ),
+                ),
                 tileColor: isActive
                     ? AppColors.primary.withValues(alpha: 0.06)
                     : null,
@@ -252,20 +339,51 @@ class AppDrawer extends StatelessWidget {
               padding: const EdgeInsets.all(16),
               child: SizedBox(
                 width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.accent,
-                    foregroundColor: Colors.white,
-                    elevation: 0,
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8)),
-                  ),
-                  child: const Text('Enviar Projeto',
-                      style: TextStyle(
-                          fontSize: 13, fontWeight: FontWeight.w600)),
-                ),
+                child: AppSession.isLoggedIn
+                    ? OutlinedButton.icon(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          _logout(context);
+                        },
+                        icon: const Icon(Icons.logout, size: 16),
+                        label: const Text(
+                          'Sair',
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: AppColors.statusRejectedFg,
+                          side: const BorderSide(color: Color(0xFFF4B8B8)),
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                      )
+                    : ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          Navigator.pushReplacementNamed(context, '/login');
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.accent,
+                          foregroundColor: Colors.white,
+                          elevation: 0,
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: const Text(
+                          'Entrar / Cadastrar',
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
               ),
             ),
           ],
@@ -305,19 +423,27 @@ class StatusBadge extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration:
-          BoxDecoration(color: bg, borderRadius: BorderRadius.circular(20)),
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: BorderRadius.circular(20),
+      ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-              width: 6,
-              height: 6,
-              decoration: BoxDecoration(color: dot, shape: BoxShape.circle)),
+            width: 6,
+            height: 6,
+            decoration: BoxDecoration(color: dot, shape: BoxShape.circle),
+          ),
           const SizedBox(width: 5),
-          Text(label,
-              style: TextStyle(
-                  fontSize: 11, fontWeight: FontWeight.w600, color: fg)),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+              color: fg,
+            ),
+          ),
         ],
       ),
     );
@@ -346,9 +472,14 @@ class ActionBtn extends StatelessWidget {
     return OutlinedButton.icon(
       onPressed: onPressed,
       icon: Icon(icon, size: 12, color: textColor),
-      label: Text(label,
-          style: TextStyle(
-              fontSize: 10, fontWeight: FontWeight.w600, color: textColor)),
+      label: Text(
+        label,
+        style: TextStyle(
+          fontSize: 10,
+          fontWeight: FontWeight.w600,
+          color: textColor,
+        ),
+      ),
       style: OutlinedButton.styleFrom(
         side: BorderSide(color: borderColor),
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -370,8 +501,7 @@ class AppFooter extends StatelessWidget {
 
     return Container(
       color: AppColors.navDark,
-      padding: EdgeInsets.fromLTRB(
-        mobile ? 20 : 32, 40, mobile ? 20 : 32, 20),
+      padding: EdgeInsets.fromLTRB(mobile ? 20 : 32, 40, mobile ? 20 : 32, 20),
       child: Column(
         children: [
           mobile ? _mobileFooter() : _desktopFooter(context),
@@ -379,9 +509,10 @@ class AppFooter extends StatelessWidget {
           const Divider(color: Color(0xFF2A3350)),
           const SizedBox(height: 12),
           const Text(
-              '© 2024 SENAC DevNest — Todos os direitos reservados.',
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Color(0xFF666666), fontSize: 11)),
+            '© 2024 SENAC DevNest — Todos os direitos reservados.',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Color(0xFF666666), fontSize: 11),
+          ),
         ],
       ),
     );
@@ -394,8 +525,22 @@ class AppFooter extends StatelessWidget {
       children: [
         Expanded(flex: 2, child: _brand()),
         if (!tablet) ...[
-          Expanded(child: _col('Navegacao', ['Projetos', 'Sobre', 'Turmas', 'Contato'])),
-          Expanded(child: _col('Categorias', ['IoT e Automacao', 'Dev Mobile', 'Inteligencia Artificial', 'Engenharia'])),
+          Expanded(
+            child: _col('Navegacao', [
+              'Projetos',
+              'Sobre',
+              'Turmas',
+              'Contato',
+            ]),
+          ),
+          Expanded(
+            child: _col('Categorias', [
+              'IoT e Automacao',
+              'Dev Mobile',
+              'Inteligencia Artificial',
+              'Engenharia',
+            ]),
+          ),
         ],
         Expanded(child: _social()),
       ],
@@ -411,8 +556,22 @@ class AppFooter extends StatelessWidget {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(child: _col('Navegacao', ['Projetos', 'Sobre', 'Turmas', 'Contato'])),
-            Expanded(child: _col('Categorias', ['IoT e Automacao', 'Dev Mobile', 'IA', 'Engenharia'])),
+            Expanded(
+              child: _col('Navegacao', [
+                'Projetos',
+                'Sobre',
+                'Turmas',
+                'Contato',
+              ]),
+            ),
+            Expanded(
+              child: _col('Categorias', [
+                'IoT e Automacao',
+                'Dev Mobile',
+                'IA',
+                'Engenharia',
+              ]),
+            ),
           ],
         ),
         const SizedBox(height: 24),
@@ -426,7 +585,8 @@ class AppFooter extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          width: 36, height: 36,
+          width: 36,
+          height: 36,
           decoration: BoxDecoration(
             gradient: const LinearGradient(
               colors: [AppColors.primary, AppColors.secondary],
@@ -436,17 +596,33 @@ class AppFooter extends StatelessWidget {
             borderRadius: BorderRadius.circular(8),
           ),
           alignment: Alignment.center,
-          child: const Text('SD',
-              style: TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 13)),
+          child: const Text(
+            'SD',
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w800,
+              fontSize: 13,
+            ),
+          ),
         ),
         const SizedBox(height: 10),
-        const Text('SENAC DevNest',
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 15)),
-        const Text('Projetos Integradores',
-            style: TextStyle(color: Color(0xFFAAAAAA), fontSize: 11)),
+        const Text(
+          'SENAC DevNest',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w700,
+            fontSize: 15,
+          ),
+        ),
+        const Text(
+          'Projetos Integradores',
+          style: TextStyle(color: Color(0xFFAAAAAA), fontSize: 11),
+        ),
         const SizedBox(height: 10),
-        const Text('Repositorio oficial dos Projetos\nIntegradores da nossa faculdade.',
-            style: TextStyle(color: Color(0xFF999999), fontSize: 12, height: 1.6)),
+        const Text(
+          'Repositório oficial dos Projetos\nIntegradores da nossa faculdade.',
+          style: TextStyle(color: Color(0xFF999999), fontSize: 12, height: 1.6),
+        ),
       ],
     );
   }
@@ -455,15 +631,24 @@ class AppFooter extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title,
-            style: const TextStyle(
-                color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600)),
+        Text(
+          title,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
         const SizedBox(height: 12),
-        ...items.map((i) => Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: Text(i,
-                  style: const TextStyle(color: Color(0xFFAAAAAA), fontSize: 12)),
-            )),
+        ...items.map(
+          (i) => Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: Text(
+              i,
+              style: const TextStyle(color: Color(0xFFAAAAAA), fontSize: 12),
+            ),
+          ),
+        ),
       ],
     );
   }
@@ -472,24 +657,43 @@ class AppFooter extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Conecte-se',
-            style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600)),
+        const Text(
+          'Conecte-se',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
         const SizedBox(height: 12),
         Row(
-          children: [Icons.code, Icons.link, Icons.camera_alt_outlined, Icons.mail_outline]
-              .map((icon) => Padding(
-                    padding: const EdgeInsets.only(right: 10),
-                    child: Container(
-                      width: 36, height: 36,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF2A3350),
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: const Color(0xFF374060)),
+          children:
+              [
+                    Icons.code,
+                    Icons.link,
+                    Icons.camera_alt_outlined,
+                    Icons.mail_outline,
+                  ]
+                  .map(
+                    (icon) => Padding(
+                      padding: const EdgeInsets.only(right: 10),
+                      child: Container(
+                        width: 36,
+                        height: 36,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF2A3350),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: const Color(0xFF374060)),
+                        ),
+                        child: Icon(
+                          icon,
+                          color: const Color(0xFFCCCCCC),
+                          size: 17,
+                        ),
                       ),
-                      child: Icon(icon, color: const Color(0xFFCCCCCC), size: 17),
                     ),
-                  ))
-              .toList(),
+                  )
+                  .toList(),
         ),
       ],
     );

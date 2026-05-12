@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'theme/app_colors.dart';
 import 'views/home_view.dart';
+import 'views/cadastro_view.dart';
 import 'views/admin_panel_view.dart';
 import 'views/networking_view.dart';
 import 'views/feedbacks_view.dart';
@@ -14,13 +15,14 @@ void main() {
 
 // Mapa de rotas → builders
 final _routes = <String, WidgetBuilder>{
-  '/':               (_) => const HomeView(),
-  '/login':          (_) => const LoginView(),
-  '/admin':          (_) => const AdminPanelView(),
-  '/networking':     (_) => const NetworkingView(),
-  '/feedbacks':      (_) => const FeedbacksView(),
-  '/dashboard':      (_) => const DashboardView(),
-  '/student-panel':  (_) => const StudentPanelView(),
+  '/': (_) => const HomeView(),
+  '/login': (_) => const LoginView(),
+  '/admin': (_) => const AdminPanelView(),
+  '/networking': (_) => const NetworkingView(),
+  '/feedbacks': (_) => const FeedbacksView(),
+  '/dashboard': (_) => const DashboardView(),
+  '/student-panel': (_) => const StudentPanelView(),
+  '/cadastro': (_) => const CadastroView(),
 };
 
 // Transição fade para todas as rotas
@@ -33,10 +35,7 @@ Route<dynamic> _fadeRoute(RouteSettings settings) {
     reverseTransitionDuration: const Duration(milliseconds: 180),
     transitionsBuilder: (context, animation, _, child) {
       return FadeTransition(
-        opacity: CurvedAnimation(
-          parent: animation,
-          curve: Curves.easeInOut,
-        ),
+        opacity: CurvedAnimation(parent: animation, curve: Curves.easeInOut),
         child: child,
       );
     },
