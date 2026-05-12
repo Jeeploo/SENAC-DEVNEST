@@ -47,7 +47,7 @@ class _LoginViewState extends State<LoginView> {
     });
     await Future.delayed(const Duration(milliseconds: 600));
     AppSession.login(role: role, name: _emailCtrl.text.trim());
-    if (mounted) _goTo(route);
+    if (mounted) _goTo('/'); // sempre inicia na página inicial
   }
 
   @override
@@ -56,9 +56,6 @@ class _LoginViewState extends State<LoginView> {
       backgroundColor: AppColors.background,
       body: Column(
         children: [
-          _PublicNavBar(
-            onLoginTap: () => setState(() => _state = _LoginState.selection),
-          ),
           Expanded(
             child: SingleChildScrollView(
               child: ConstrainedBox(

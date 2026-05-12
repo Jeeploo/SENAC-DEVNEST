@@ -119,14 +119,10 @@ class AppNavBar extends StatelessWidget implements PreferredSizeWidget {
                 ),
               ),
             ),
-            const Icon(Icons.search, color: AppColors.textSecondary, size: 22),
-            const SizedBox(width: 16),
-            _ctaButton(context),
+            _logoutButton(context),
           ] else if (Responsive.isTablet(context)) ...[
             const Spacer(),
-            const Icon(Icons.search, color: AppColors.textSecondary, size: 22),
-            const SizedBox(width: 12),
-            _ctaButton(context),
+            _logoutButton(context),
             const SizedBox(width: 8),
             _menuButton(context),
           ] else ...[
@@ -183,6 +179,49 @@ class AppNavBar extends StatelessWidget implements PreferredSizeWidget {
           ],
         ),
       ],
+    );
+  }
+
+  Widget _logoutButton(BuildContext context) {
+    if (AppSession.isLoggedIn) {
+      return Tooltip(
+        message: 'Sair',
+        child: InkWell(
+          onTap: () => _logout(context),
+          borderRadius: BorderRadius.circular(8),
+          child: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: const Color(0xFFFFF0F0),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: const Color(0xFFF4B8B8)),
+            ),
+            child: const Icon(
+              Icons.logout,
+              size: 18,
+              color: AppColors.statusRejectedFg,
+            ),
+          ),
+        ),
+      );
+    }
+    return Tooltip(
+      message: 'Entrar',
+      child: InkWell(
+        onTap: () => Navigator.pushReplacementNamed(context, '/login'),
+        borderRadius: BorderRadius.circular(8),
+        child: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: AppColors.primary.withValues(alpha: 0.08),
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: AppColors.primary.withValues(alpha: 0.25),
+            ),
+          ),
+          child: const Icon(Icons.login, size: 18, color: AppColors.primary),
+        ),
+      ),
     );
   }
 

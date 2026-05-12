@@ -3,7 +3,6 @@ import '../theme/app_colors.dart';
 import '../utils/responsive.dart';
 import '../widgets/shared_widgets.dart';
 import '../services/app_services.dart';
-import '../services/ai_analysis_service.dart';
 import '../services/matching_service.dart';
 
 // ─── STATUS ──────────────────────────────────────────────────────────────────
