@@ -1,311 +1,204 @@
-#  SENAC DEVNEST
+# SENAC DEVNEST 🚀
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Status-Em%20Desenvolvimento-8A2BE2?style=for-the-badge"/>
-  <img src="https://img.shields.io/badge/Faculdade-SENAC-FF6B00?style=for-the-badge"/>
-  <img src="https://img.shields.io/badge/Version-1.0-blue?style=for-the-badge"/>
-</p>
-
-<p align="center">
-  Plataforma acadêmica colaborativa para conexão entre alunos, professores e empresas parceiras.
-</p>
+> Plataforma acadêmica colaborativa desenvolvida para conectar alunos, professores, coordenadores e empresas parceiras em um ambiente digital moderno, acessível e colaborativo.
+>
+> Collaborative academic platform designed to connect students, teachers, coordinators, and partner companies in a modern, accessible, and collaborative digital environment.
 
 ---
 
-# 🇧🇷 Português | 🇺🇸 English
+## 📋 Project Overview | Sobre o Projeto
 
-##  Sobre o Projeto | About the Project
+### 🇧🇷 Português
 
-O **SENAC DEVNEST** é uma plataforma acadêmica colaborativa desenvolvida para conectar alunos, professores, coordenadores e empresas parceiras em um único ambiente digital moderno e intuitivo.
+O SENAC DEVNEST é uma plataforma acadêmica colaborativa desenvolvida para conectar alunos, professores, coordenadores e empresas parceiras em um único ambiente digital moderno e intuitivo.
 
 O sistema centraliza projetos, atividades, mentorias e oportunidades profissionais, promovendo aprendizado prático e integração com o mercado de trabalho.
 
----
+### 🇺🇸 English
 
-The **SENAC DEVNEST** is a collaborative academic platform designed to connect students, teachers, coordinators, and partner companies in a modern and intuitive digital environment.
+SENAC DEVNEST is a collaborative academic platform designed to connect students, teachers, coordinators, and partner companies in a modern and intuitive digital environment.
 
-The system centralizes projects, activities, mentoring, and professional opportunities, promoting practical learning and market integration.
-
----
-#  Objetivo do Projeto | Project Objective
-
-O **SENAC DEVNEST** tem como objetivo criar um **Observatório de Projetos Integradores**, permitindo que alunos armazenem, organizem e apresentem os projetos desenvolvidos ao longo da graduação em um ambiente digital moderno, acessível e colaborativo.
-
-A plataforma busca fortalecer a conexão entre **alunos**, **professores** e **empresas parceiras do SENAC**, funcionando como uma vitrine acadêmica para divulgação de ideias, soluções e experiências desenvolvidas dentro da instituição.
-
-Além disso, o sistema permitirá:
-
--  Centralização dos projetos acadêmicos  
--  Valorização do portfólio dos alunos  
--  Aproximação entre estudantes e empresas parceiras  
--  Divulgação de talentos e soluções inovadoras  
--  Incentivo à colaboração e networking profissional  
--  Acompanhamento da evolução acadêmica dos estudantes  
-
-O projeto também visa incentivar a inovação, a prática profissional e a integração entre o ambiente acadêmico e o mercado de trabalho, oferecendo oportunidades reais de visibilidade para os alunos e seus projetos.
+The system centralizes projects, activities, mentoring, and professional opportunities, promoting practical learning and integration with the job market.
 
 ---
 
-The **SENAC DEVNEST** aims to create an **Integrated Projects Observatory**, allowing students to store, organize, and showcase projects developed throughout their academic journey in a modern, accessible, and collaborative digital environment.
+## 🎯 Project Objective | Objetivo do Projeto
 
-The platform seeks to strengthen the connection between **students**, **teachers**, and **SENAC partner companies**, functioning as an academic showcase for sharing ideas, solutions, and experiences developed within the institution.
+### 🇧🇷 Português
 
-Additionally, the system will provide:
+O SENAC DEVNEST tem como objetivo criar um Observatório de Projetos Integradores, permitindo que alunos armazenem, organizem e apresentem os projetos desenvolvidos ao longo da graduação.
 
--  Centralization of academic projects  
--  Enhancement of student portfolios  
--  Connection between students and partner companies  
--  Promotion of talent and innovative solutions  
--  Encouragement of collaboration and professional networking  
--  Monitoring of students’ academic progress  
+A plataforma fortalece a conexão entre alunos, professores e empresas parceiras do SENAC, funcionando como uma vitrine acadêmica para divulgação de ideias, soluções e experiências desenvolvidas dentro da instituição.
 
-The project also aims to encourage innovation, professional practice, and integration between the academic environment and the job market, offering students real opportunities for visibility and professional growth.
+### 🇺🇸 English
 
----
+The SENAC DEVNEST aims to create an Integrated Projects Observatory, allowing students to store, organize, and showcase projects developed throughout their academic journey.
 
-#  Objetivo das User Stories | User Stories Objective
-
-As User Stories representam as necessidades dos usuários do sistema de forma clara e objetiva, garantindo que as funcionalidades desenvolvidas atendam aos requisitos acadêmicos e de negócio do projeto.
+The platform strengthens the connection between students, teachers, and SENAC partner companies, functioning as an academic showcase for sharing ideas, solutions, and experiences developed within the institution.
 
 ---
 
-The User Stories represent the users’ needs clearly and objectively, ensuring that all implemented features meet the academic and business requirements of the project.
+## ✨ Key Features | Funcionalidades Principais
+
+### 🇧🇷 Português
+
+- 📚 Centralização dos projetos acadêmicos
+- 🎓 Valorização do portfólio dos alunos
+- 🤝 Aproximação entre estudantes e empresas parceiras
+- 💡 Divulgação de talentos e soluções inovadoras
+- 🌐 Incentivo à colaboração e networking profissional
+- 📈 Acompanhamento da evolução acadêmica
+- 🏢 Integração com empresas parceiras
+- 📝 Gerenciamento de atividades e projetos
+
+### 🇺🇸 English
+
+- 📚 Centralization of academic projects
+- 🎓 Enhancement of student portfolios
+- 🤝 Connection between students and partner companies
+- 💡 Promotion of talent and innovative solutions
+- 🌐 Encouragement of collaboration and professional networking
+- 📈 Monitoring of academic progress
+- 🏢 Integration with partner companies
+- 📝 Activity and project management
 
 ---
 
-#  Perfis de Usuário | User Profiles
+## 👥 User Profiles | Perfis de Usuário
 
-##  Aluno | Student
-
-Participa de projetos, acessa conteúdos, acompanha atividades e interage com professores e empresas parceiras.
-
----
+### 🎓 Student | Aluno
 
 Participates in projects, accesses content, follows activities, and interacts with teachers and partner companies.
 
----
+Participa de projetos, acessa conteúdos, acompanha atividades e interage com professores e empresas parceiras.
 
-##  Professor | Teacher
-
-Orienta alunos, cria atividades, acompanha desempenho e valida entregas acadêmicas.
-
----
+### 👨‍🏫 Teacher | Professor
 
 Mentors students, creates activities, tracks performance, and validates academic deliveries.
 
----
+Orienta alunos, cria atividades, acompanha desempenho e valida entregas acadêmicas.
 
-##  Administrador / Coordenador | Administrator / Coordinator
-
-Gerencia usuários, turmas, projetos e permissões da plataforma.
-
----
+### 🛠️ Administrator / Coordinator | Administrador / Coordenador
 
 Manages users, classes, projects, and platform permissions.
 
----
+Gerencia usuários, turmas, projetos e permissões da plataforma.
 
-##  Empresa Parceira | Partner Company
+### 🏢 Partner Company | Empresa Parceira
+
+Provides challenges, opportunities, mentoring, and connections between students and the job market.
 
 Oferece desafios, oportunidades, mentorias e conexão entre estudantes e o mercado.
 
 ---
 
-Provides challenges, opportunities, mentoring, and connections between students and the job market.
+## 📖 User Stories
+
+### US01 – User Registration | Cadastro de Usuário
+
+**As a user**, I want to create an account on the platform so that I can access the available system resources.
+
+**Como usuário**, quero criar uma conta na plataforma para acessar os recursos disponíveis do sistema.
+
+**Priority | Prioridade:** High | Alta
 
 ---
 
-#  User Stories
+### US02 – System Login | Login no Sistema
 
+**As a user**, I want to log into the platform so that I can access my personalized dashboard.
 
-#  US01 - Cadastro de Usuário | User Registration
+**Como usuário**, quero realizar login na plataforma para acessar minha área personalizada.
 
-**Como** usuário,  
-**quero** criar uma conta na plataforma,  
-**para** acessar os recursos disponíveis do sistema.
-
----
-
-**As a** user,  
-**I want** to create an account on the platform,  
-**so that** I can access the available system resources.
+**Priority | Prioridade:** High | Alta
 
 ---
 
-###  Critérios de Aceitação | Acceptance Criteria
+### US03 – Project Participation | Participação em Projetos
 
-- O usuário deve informar nome, e-mail e senha  
-- O sistema deve validar e-mails duplicados  
-- O cadastro deve ser concluído com sucesso
+**As a student**, I want to participate in academic projects so that I can improve my practical skills.
 
----
+**Como aluno**, quero participar de projetos acadêmicos para desenvolver minhas habilidades práticas.
 
-- The user must provide name, email, and password  
-- The system must validate duplicate emails  
-- Registration must be completed successfully  
-
-###  Prioridade | Priority
-
-Alta | High
+**Priority | Prioridade:** Medium | Média
 
 ---
 
-#  US02 - Login no Sistema | System Login
+### US04 – Activity Management | Gerenciamento de Atividades
 
-**Como** usuário,  
-**quero** realizar login na plataforma,  
-**para** acessar minha área personalizada.
+**As a teacher**, I want to create and manage activities so that I can track student performance.
 
----
+**Como professor**, quero criar e gerenciar atividades para acompanhar o desempenho dos alunos.
 
-**As a** user,  
-**I want** to log into the platform,  
-**so that** I can access my personalized dashboard.
+**Priority | Prioridade:** High | Alta
 
 ---
 
-###  Critérios de Aceitação | Acceptance Criteria
+### US05 – Company Integration | Integração com Empresas
 
-- O sistema deve validar credenciais  
-- O usuário deve acessar apenas após autenticação  
-- Deve existir opção de recuperação de senha
+**As a partner company**, I want to publish opportunities and challenges so that I can connect students with the job market.
 
----
+**Como empresa parceira**, quero divulgar oportunidades e desafios para conectar estudantes ao mercado de trabalho.
 
-- The system must validate credentials  
-- Access should only be granted after authentication  
-- Password recovery option must exist  
-
-###  Prioridade | Priority
-
-Alta | High
+**Priority | Prioridade:** Medium | Média
 
 ---
 
-#  US03 - Participação em Projetos | Project Participation
+## 📋 Business Rules | Regras de Negócio
 
-**Como** aluno,  
-**quero** participar de projetos acadêmicos,  
-**para** desenvolver minhas habilidades práticas.
+### 🇧🇷 Português
 
----
+- Apenas usuários autenticados podem acessar funcionalidades internas.
+- Professores possuem permissões diferentes dos alunos.
+- Empresas parceiras devem ser aprovadas pela coordenação.
+- Todas as atividades devem possuir prazo de entrega.
+- O sistema deve registrar histórico de interações.
 
-**As a** student,  
-**I want** to participate in academic projects,  
-**so that** I can improve my practical skills.
+### 🇺🇸 English
 
----
-
-###  Critérios de Aceitação | Acceptance Criteria
-
-- O aluno deve visualizar projetos disponíveis  
-- O sistema deve permitir inscrição em projetos  
-- O professor deve validar participação
+- Only authenticated users can access internal features.
+- Teachers have different permissions from students.
+- Partner companies must be approved by coordinators.
+- All activities must contain deadlines.
+- The system must maintain interaction history.
 
 ---
 
-- Students must view available projects  
-- The system must allow project registration  
-- Teachers must validate participation  
+## 💻 Tech Stack | Tecnologias Utilizadas
 
-###  Prioridade | Priority
-
-Média | Medium
-
----
-
-#  US04 - Gerenciamento de Atividades | Activity Management
-
-**Como** professor,  
-**quero** criar e gerenciar atividades,  
-**para** acompanhar o desempenho dos alunos.
+| Technology | Purpose |
+|------------|---------|
+| Flutter | Frontend |
+| Dart | Backend |
+| MySQL | Database |
+| Git & GitHub | Version Control |
 
 ---
 
-**As a** teacher,  
-**I want** to create and manage activities,  
-**so that** I can track student performance.
+## ⚙️ Getting Started | Como Executar
+
+### Prerequisites | Pré-requisitos
+
+- Flutter SDK
+- Dart SDK
+- MySQL
+- Git
+
+### Installation | Instalação
+
+```bash
+git clone https://github.com/your-repository/senac-devnest.git
+
+cd senac-devnest
+
+flutter pub get
+
+flutter run
+```
 
 ---
 
-###  Critérios de Aceitação | Acceptance Criteria
-
-- O professor deve cadastrar atividades  
-- O sistema deve permitir edição e exclusão  
-- Os alunos devem visualizar atividades atribuídas  
-
----
-
-- Teachers must create activities  
-- The system must allow editing and deletion  
-- Students must view assigned activities  
-
-###  Prioridade | Priority
-
-Alta | High
-
----
-
-#  US05 - Integração com Empresas | Company Integration
-
-**Como** empresa parceira,  
-**quero** divulgar oportunidades e desafios,  
-**para** conectar estudantes ao mercado de trabalho.
-
----
-
-**As a** partner company,  
-**I want** to publish opportunities and challenges,  
-**so that** I can connect students with the job market.
-
----
-
-###  Critérios de Aceitação | Acceptance Criteria
-
-- Empresas devem cadastrar oportunidades  
-- Alunos devem visualizar vagas e desafios  
-- O sistema deve registrar candidaturas  
-
----
-
-- Companies must register opportunities  
-- Students must view jobs and challenges  
-- The system must register applications  
-
-###  Prioridade | Priority
-
-Média | Medium
-
----
-
-#  Regras de Negócio | Business Rules
-
-- Apenas usuários autenticados podem acessar funcionalidades internas  
-- Professores possuem permissões diferentes dos alunos  
-- Empresas parceiras devem ser aprovadas pela coordenação  
-- Todas as atividades devem possuir prazo de entrega  
-- O sistema deve registrar histórico de interações
-
----
-
-- Only authenticated users can access internal features  
-- Teachers have different permissions from students  
-- Partner companies must be approved by coordinators  
-- All activities must contain deadlines  
-- The system must maintain interaction history  
-
----
-
-#  Tecnologias Utilizadas | Technologies Used
-
-- Frontend: Flutter
-- Backend: Dart
-- Database: MySQL
-- Version Control: Git & GitHub
-
----
-
-#  Estrutura do Projeto | Project Structure
+## 📂 Project Structure | Estrutura do Projeto
 
 ```bash
 📦 senac-devnest
@@ -318,10 +211,40 @@ Média | Medium
 
 ---
 
-#  Equipe de Desenvolvimento | Development Team
+## 🚀 Future Improvements | Melhorias Futuras
 
-Projeto desenvolvido para fins acadêmicos no SENAC.
+### 🇧🇷 Português
+
+- Sistema de recomendação de projetos
+- Dashboard analítico para coordenadores
+- Aplicativo mobile
+- Sistema de notificações
+- Integração com LinkedIn
+
+### 🇺🇸 English
+
+- Project recommendation system
+- Analytics dashboard for coordinators
+- Mobile application
+- Notification system
+- LinkedIn integration
 
 ---
 
+## 👨‍💻 Development Team | Equipe de Desenvolvimento
+
+Projeto desenvolvido para fins acadêmicos no SENAC.
+
 Project developed for academic purposes at SENAC.
+
+---
+
+## 📄 License | Licença
+
+### 🇧🇷 Português
+
+Este projeto foi desenvolvido exclusivamente para fins acadêmicos.
+
+### 🇺🇸 English
+
+This project was developed exclusively for academic purposes.
