@@ -256,7 +256,6 @@ class _FeedbacksViewState extends State<FeedbacksView> {
                       ),
                     ),
                   ),
-
                   const AppFooter(),
                 ],
               ),

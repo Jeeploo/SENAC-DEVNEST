@@ -146,7 +146,9 @@ class _CadastroViewState extends State<CadastroView> {
           const AppNavBar(),
           Expanded(
             child: SingleChildScrollView(
-              child: ConstrainedBox(
+              child: Column(
+                children: [
+                  ConstrainedBox(
                 constraints: BoxConstraints(
                   minHeight: MediaQuery.of(context).size.height - 60,
                 ),
@@ -542,9 +544,11 @@ class _CadastroViewState extends State<CadastroView> {
                         ),
                       ),
                     ),
-                    const AppFooter(),
                   ],
                 ),
+              ),
+                  const AppFooter(),
+                ],
               ),
             ),
           ),

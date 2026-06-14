@@ -4,6 +4,7 @@ import '../utils/responsive.dart';
 import '../widgets/shared_widgets.dart';
 import '../services/app_services.dart';
 import '../services/matching_service.dart';
+import 'desafios_aluno_section.dart';
 
 // ─── STATUS ──────────────────────────────────────────────────────────────────
 enum _StudentStatus { approved, pending, rejected }
@@ -21,6 +22,8 @@ class _StudentProject {
   final String date;
   final _StudentStatus status;
   final String? rejectionReason;
+  final bool isResubmission;
+  final int resubmissionCount;
 
   const _StudentProject({
     required this.id,
@@ -34,6 +37,8 @@ class _StudentProject {
     required this.date,
     required this.status,
     this.rejectionReason,
+    this.isResubmission = false,
+    this.resubmissionCount = 0,
   });
 
   _StudentProject copyWith({
@@ -45,19 +50,24 @@ class _StudentProject {
     String? githubLink,
     String? demoLink,
     _StudentStatus? status,
-  }) => _StudentProject(
-    id: id,
-    date: date,
-    status: status ?? this.status,
-    rejectionReason: rejectionReason,
-    title: title ?? this.title,
-    classGroup: classGroup ?? this.classGroup,
-    coorientador: coorientador ?? this.coorientador,
-    description: description ?? this.description,
-    technologies: technologies ?? this.technologies,
-    githubLink: githubLink ?? this.githubLink,
-    demoLink: demoLink ?? this.demoLink,
-  );
+    bool? isResubmission,
+    int? resubmissionCount,
+  }) =>
+      _StudentProject(
+        id: id,
+        date: date,
+        status: status ?? this.status,
+        rejectionReason: rejectionReason,
+        title: title ?? this.title,
+        classGroup: classGroup ?? this.classGroup,
+        coorientador: coorientador ?? this.coorientador,
+        description: description ?? this.description,
+        technologies: technologies ?? this.technologies,
+        githubLink: githubLink ?? this.githubLink,
+        demoLink: demoLink ?? this.demoLink,
+        isResubmission: isResubmission ?? this.isResubmission,
+        resubmissionCount: resubmissionCount ?? this.resubmissionCount,
+      );
 }
 
 const _kTurmas = [
@@ -241,15 +251,32 @@ class _StudentPanelViewState extends State<StudentPanelView> {
   Widget build(BuildContext context) {
     final mobile = Responsive.isMobile(context);
     final hPad = mobile ? 16.0 : 40.0;
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      drawer: mobile ? const AppDrawer() : null,
-      body: Column(
-        children: [
-          const AppNavBar(),
-          Expanded(
-            child: SingleChildScrollView(
-              child: ConstrainedBox(
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        drawer: mobile ? const AppDrawer() : null,
+        body: Column(
+          children: [
+            const AppNavBar(),
+            Container(
+              color: AppColors.surface,
+              child: const TabBar(
+                labelColor: AppColors.primary,
+                unselectedLabelColor: AppColors.textMuted,
+                indicatorColor: AppColors.primary,
+                indicatorWeight: 3,
+                tabs: [
+                  Tab(text: 'Meus Projetos'),
+                  Tab(text: 'Desafios das Empresas'),
+                ],
+              ),
+            ),
+            Expanded(
+              child: TabBarView(
+                children: [
+                  SingleChildScrollView(
+                    child: ConstrainedBox(
                 constraints: BoxConstraints(
                   minHeight: MediaQuery.of(context).size.height - 60,
                 ),
@@ -492,15 +519,19 @@ class _StudentPanelViewState extends State<StudentPanelView> {
                         ),
                       ),
                     ),
-                    const AppFooter(),
+                  const AppFooter(),
                   ],
                 ),
               ),
             ),
-          ),
-        ],
+            const DesafiosAlunoSection(),
+          ],
+        ),
       ),
-    );
+    ],
+  ),
+),
+);
   }
 }
 
@@ -797,7 +828,34 @@ class _DesktopTable extends StatelessWidget {
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 12, bottom: 12, right: 8),
-                child: _StatusChip(p.status),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _StatusChip(p.status),
+                    if (p.isResubmission) ...[
+                      const SizedBox(height: 4),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 7, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFFF3E0),
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(
+                              color: const Color(0xFFFF9800)
+                                  .withValues(alpha: 0.4)),
+                        ),
+                        child: Text(
+                          'Reenvio #${p.resubmissionCount}',
+                          style: const TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w700,
+                              color: Color(0xFFE65100)),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10),
@@ -825,6 +883,18 @@ class _DesktopTable extends StatelessWidget {
                         onUpdate: onUpdate,
                       ),
                     ),
+                    if (p.status == _StudentStatus.rejected)
+                      ActionBtn(
+                        label: 'Reenviar',
+                        icon: Icons.replay_outlined,
+                        borderColor: const Color(0xFF7C3AED),
+                        textColor: const Color(0xFF7C3AED),
+                        onPressed: () => _ResubmitDialog.show(
+                          context,
+                          project: p,
+                          onResubmit: (updated) => onUpdate(updated),
+                        ),
+                      ),
                     ActionBtn(
                       label: 'Excluir',
                       icon: Icons.delete_outline,
@@ -980,6 +1050,29 @@ class _MobileList extends StatelessWidget {
                             ),
                           ),
                         ),
+                        if (p.status == _StudentStatus.rejected)
+                          OutlinedButton.icon(
+                            onPressed: () => _ResubmitDialog.show(
+                              context,
+                              project: p,
+                              onResubmit: (u) => onUpdate(u),
+                            ),
+                            icon: const Icon(Icons.replay_outlined,
+                                size: 14),
+                            label: const Text('Reenviar',
+                                style: TextStyle(fontSize: 12)),
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor:
+                                  const Color(0xFF7C3AED),
+                              side: const BorderSide(
+                                  color: Color(0xFF7C3AED)),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 8),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius:
+                                      BorderRadius.circular(8)),
+                            ),
+                          ),
                         OutlinedButton.icon(
                           onPressed: () => onDelete(p.id),
                           icon: const Icon(Icons.delete_outline, size: 14),
@@ -1476,6 +1569,255 @@ class _NewProjectForm extends StatelessWidget {
       _txt(c, h),
     ],
   );
+}
+
+// ─── RESUBMIT DIALOG ─────────────────────────────────────────────────────────
+class _ResubmitDialog extends StatefulWidget {
+  final _StudentProject project;
+  final void Function(_StudentProject) onResubmit;
+  const _ResubmitDialog(
+      {required this.project, required this.onResubmit});
+
+  static Future<void> show(
+    BuildContext ctx, {
+    required _StudentProject project,
+    required void Function(_StudentProject) onResubmit,
+  }) =>
+      showDialog(
+        context: ctx,
+        barrierColor: Colors.black.withValues(alpha: 0.45),
+        builder: (_) => _ResubmitDialog(
+            project: project, onResubmit: onResubmit),
+      );
+
+  @override
+  State<_ResubmitDialog> createState() => _ResubmitDialogState();
+}
+
+class _ResubmitDialogState extends State<_ResubmitDialog> {
+  late final TextEditingController _titleCtrl;
+  late final TextEditingController _descCtrl;
+  late final TextEditingController _techCtrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _titleCtrl =
+        TextEditingController(text: widget.project.title);
+    _descCtrl =
+        TextEditingController(text: widget.project.description);
+    _techCtrl = TextEditingController(
+        text: widget.project.technologies.join(', '));
+  }
+
+  @override
+  void dispose() {
+    _titleCtrl.dispose();
+    _descCtrl.dispose();
+    _techCtrl.dispose();
+    super.dispose();
+  }
+
+  void _confirm() {
+    if (_titleCtrl.text.trim().isEmpty) return;
+    final techs = _techCtrl.text
+        .split(',')
+        .map((t) => t.trim())
+        .where((t) => t.isNotEmpty)
+        .toList();
+    final updated = widget.project.copyWith(
+      title: _titleCtrl.text.trim(),
+      description: _descCtrl.text.trim(),
+      technologies: techs,
+      status: _StudentStatus.pending,
+      isResubmission: true,
+      resubmissionCount: widget.project.resubmissionCount + 1,
+    );
+    widget.onResubmit(updated);
+    Navigator.pop(context);
+  }
+
+  @override
+  Widget build(BuildContext context) => Dialog(
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16)),
+        insetPadding: const EdgeInsets.symmetric(
+            horizontal: 24, vertical: 32),
+        child: SizedBox(
+          width: 520,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Header
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.fromLTRB(20, 18, 16, 18),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF3F0FF),
+                  borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(16)),
+                ),
+                child: Row(children: [
+                  Container(
+                    width: 36,
+                    height: 36,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF7C3AED),
+                      borderRadius: BorderRadius.circular(9),
+                    ),
+                    child: const Icon(Icons.replay_outlined,
+                        color: Colors.white, size: 18),
+                  ),
+                  const SizedBox(width: 10),
+                  const Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Reenviar Projeto',
+                            style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.textPrimary)),
+                        Text('Edite e reenvie para nova avaliação',
+                            style: TextStyle(
+                                fontSize: 11,
+                                color: AppColors.textSecondary)),
+                      ],
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () => Navigator.pop(context),
+                    icon: const Icon(Icons.close,
+                        size: 18, color: AppColors.textMuted),
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                  ),
+                ]),
+              ),
+              const Divider(height: 1, color: AppColors.border),
+              // Body
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Motivo da reprovação
+                    if (widget.project.rejectionReason != null &&
+                        widget.project.rejectionReason!.isNotEmpty) ...[
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: AppColors.statusRejectedBg,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                              color: AppColors.statusRejectedDot
+                                  .withValues(alpha: 0.4)),
+                        ),
+                        child: Column(
+                          crossAxisAlignment:
+                              CrossAxisAlignment.start,
+                          children: [
+                            const Text('Motivo da reprovação:',
+                                style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.statusRejectedFg)),
+                            const SizedBox(height: 4),
+                            Text(widget.project.rejectionReason!,
+                                style: const TextStyle(
+                                    fontSize: 12,
+                                    color: AppColors.textSecondary)),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+                    _field('Título', _titleCtrl),
+                    const SizedBox(height: 12),
+                    _field('Descrição', _descCtrl, maxLines: 3),
+                    const SizedBox(height: 12),
+                    _field('Tecnologias (separadas por vírgula)',
+                        _techCtrl),
+                  ],
+                ),
+              ),
+              const Divider(height: 1, color: AppColors.border),
+              // Footer
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 14, 20, 18),
+                child: Row(children: [
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: _confirm,
+                      icon: const Icon(Icons.send_outlined, size: 16),
+                      label: const Text('Reenviar para Avaliação',
+                          style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600)),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF7C3AED),
+                        foregroundColor: Colors.white,
+                        elevation: 0,
+                        padding:
+                            const EdgeInsets.symmetric(vertical: 13),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  OutlinedButton(
+                    onPressed: () => Navigator.pop(context),
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: AppColors.border),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 18, vertical: 13),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)),
+                    ),
+                    child: const Text('Cancelar',
+                        style: TextStyle(
+                            fontSize: 13,
+                            color: AppColors.textSecondary)),
+                  ),
+                ]),
+              ),
+            ],
+          ),
+        ),
+      );
+
+  Widget _field(String label, TextEditingController ctrl,
+          {int maxLines = 1}) =>
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Text(label,
+            style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: AppColors.textSecondary)),
+        const SizedBox(height: 6),
+        TextField(
+          controller: ctrl,
+          maxLines: maxLines,
+          style: const TextStyle(fontSize: 13),
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: AppColors.background,
+            border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(9),
+                borderSide: BorderSide.none),
+            enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(9),
+                borderSide: const BorderSide(color: AppColors.border)),
+            focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(9),
+                borderSide:
+                    const BorderSide(color: Color(0xFF7C3AED))),
+            contentPadding: const EdgeInsets.all(12),
+          ),
+        ),
+      ]);
 }
 
 // ─── UPDATE DIALOG ────────────────────────────────────────────────────────────

@@ -58,7 +58,9 @@ class _LoginViewState extends State<LoginView> {
         children: [
           Expanded(
             child: SingleChildScrollView(
-              child: ConstrainedBox(
+              child: Column(
+                children: [
+                  ConstrainedBox(
                 constraints: BoxConstraints(
                   minHeight: MediaQuery.of(context).size.height,
                 ),
@@ -132,9 +134,11 @@ class _LoginViewState extends State<LoginView> {
                         ),
                       ),
                     ),
-                    const AppFooter(),
                   ],
                 ),
+              ),
+                  const AppFooter(),
+                ],
               ),
             ),
           ),
@@ -144,7 +148,7 @@ class _LoginViewState extends State<LoginView> {
   }
 }
 
-// ─── NAVBAR PÚBLICA ───────────────────────────────────────────────────────────
+// ignore: unused_element — kept for future use
 class _PublicNavBar extends StatelessWidget {
   final VoidCallback onLoginTap;
   const _PublicNavBar({required this.onLoginTap});

@@ -602,7 +602,7 @@ class _ProjectDetailDialogState extends State<ProjectDetailDialog> {
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(color: cor.withValues(alpha: 0.3)),
                 ),
-                child: Text('${entry.value.toStringAsFixed(1)}',
+                child: Text(entry.value.toStringAsFixed(1),
                     style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: cor)),
               ),
             ]),

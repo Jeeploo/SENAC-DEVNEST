@@ -46,6 +46,9 @@ class Project {
   final String? studentInitials;
   final String? classGroupName;
 
+  final bool isResubmission;
+  final int resubmissionCount;
+
   const Project({
     required this.id,
     required this.studentId,
@@ -60,6 +63,8 @@ class Project {
     this.studentName,
     this.studentInitials,
     this.classGroupName,
+    this.isResubmission = false,
+    this.resubmissionCount = 0,
   });
 
   factory Project.fromMap(Map<String, dynamic> map) => Project(
@@ -91,7 +96,12 @@ class Project {
         'updated_at': updatedAt.toIso8601String(),
       };
 
-  Project copyWith({ProjectStatus? status}) => Project(
+  Project copyWith({
+    ProjectStatus? status,
+    bool? isResubmission,
+    int? resubmissionCount,
+  }) =>
+      Project(
         id: id,
         studentId: studentId,
         title: title,
@@ -105,6 +115,8 @@ class Project {
         studentName: studentName,
         studentInitials: studentInitials,
         classGroupName: classGroupName,
+        isResubmission: isResubmission ?? this.isResubmission,
+        resubmissionCount: resubmissionCount ?? this.resubmissionCount,
       );
 }
 
@@ -112,7 +124,7 @@ class Project {
 final List<Project> kProjectsMock = [
   Project(id: 1, studentId: 1, title: 'App de Monitoramento Ambiental', description: 'Aplicativo Flutter para monitoramento de dados ambientais.', technologies: 'Flutter, Dart, SQLite', status: ProjectStatus.submitted, createdAt: DateTime(2024, 4, 21), updatedAt: DateTime(2024, 4, 21), studentName: 'Lucas Ferreira', studentInitials: 'LF', classGroupName: 'ADS 2024.1'),
   Project(id: 2, studentId: 2, title: 'Plataforma de Tutoria Online', description: 'Sistema web para conexao entre tutores e alunos.', technologies: 'Flutter, Dart, MySQL', status: ProjectStatus.submitted, createdAt: DateTime(2024, 4, 19), updatedAt: DateTime(2024, 4, 19), studentName: 'Ana Beatriz Lima', studentInitials: 'AB', classGroupName: 'GTI 2024.1'),
-  Project(id: 3, studentId: 3, title: 'Sistema de Gestao de Estoque', description: 'Controle de estoque com relatorios e alertas.', technologies: 'Flutter, Dart, MySQL', status: ProjectStatus.submitted, createdAt: DateTime(2024, 4, 17), updatedAt: DateTime(2024, 4, 17), studentName: 'Carlos Eduardo Santos', studentInitials: 'CE', classGroupName: 'ADS 2024.2'),
+  Project(id: 3, studentId: 3, title: 'Sistema de Gestao de Estoque', description: 'Controle de estoque com relatorios e alertas.', technologies: 'Flutter, Dart, MySQL', status: ProjectStatus.submitted, createdAt: DateTime(2024, 4, 17), updatedAt: DateTime(2024, 4, 17), studentName: 'Carlos Eduardo Santos', studentInitials: 'CE', classGroupName: 'ADS 2024.2', isResubmission: true, resubmissionCount: 1),
   Project(id: 4, studentId: 4, title: 'Rede Social para Adocao de Pets', description: 'Plataforma para conectar pets a novas familias.', technologies: 'Flutter, Dart, SQLite', status: ProjectStatus.evaluated, createdAt: DateTime(2024, 4, 14), updatedAt: DateTime(2024, 4, 14), studentName: 'Mariana Oliveira', studentInitials: 'MO', classGroupName: 'DS 2024.1'),
   Project(id: 5, studentId: 5, title: 'Dashboard Financeiro Pessoal', description: 'Controle de financas pessoais com graficos.', technologies: 'Flutter, Dart, SQLite', status: ProjectStatus.evaluated, createdAt: DateTime(2024, 4, 9), updatedAt: DateTime(2024, 4, 9), studentName: 'Pedro Alves', studentInitials: 'PA', classGroupName: 'GTI 2024.2'),
 ];

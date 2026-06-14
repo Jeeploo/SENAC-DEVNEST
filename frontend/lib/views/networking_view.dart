@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 import '../utils/responsive.dart';
 import '../widgets/shared_widgets.dart';
-import '../utils/app_session.dart';
 
 // ─── MODELS ──────────────────────────────────────────────────────────────────
 class _Contact {

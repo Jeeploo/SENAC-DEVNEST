@@ -802,7 +802,7 @@ class _RelatoriosCardState extends State<_RelatoriosCard> {
               Row(children: [
                 const Icon(Icons.preview_outlined, size: 16, color: AppColors.textMuted),
                 const SizedBox(width: 6),
-                Text('Pré-visualização — ${_turmaFiltro}', style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textSecondary)),
+                Text('Pré-visualização — $_turmaFiltro', style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textSecondary)),
               ]),
               const SizedBox(height: 16),
               // Stats em linha
@@ -871,7 +871,7 @@ class _RelatoriosCardState extends State<_RelatoriosCard> {
               const SizedBox(height: 12),
               const Text('Relatório gerado com sucesso!', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: Color(0xFF4A148C))),
               const SizedBox(height: 4),
-              Text('${_turmaFiltro} · $total projetos · Taxa de aprovação: $taxa%',
+              Text('$_turmaFiltro · $total projetos · Taxa de aprovação: $taxa%',
                   style: const TextStyle(fontSize: 12, color: Color(0xFF7B1FA2))),
               const SizedBox(height: 16),
               Row(mainAxisAlignment: MainAxisAlignment.center, children: [
