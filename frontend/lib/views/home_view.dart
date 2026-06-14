@@ -1,6 +1,6 @@
-import 'dart:math' as dart_math;
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
+import '../utils/app_session.dart';
 import '../utils/responsive.dart';
 import '../widgets/shared_widgets.dart';
 
@@ -195,7 +195,7 @@ class _HeroSectionState extends State<_HeroSection>
             // ── LAYER 0: Background image (parallax 0.4x) ─────────────────────
             Transform(
               transform: Matrix4.translationValues(-dx * 0.4, -dy * 0.4, 0)
-                ..scale(1.08),
+                ..scaleByDouble(1.08, 1.08, 1.0, 1.0),
               alignment: Alignment.center,
               child: Image.network(
                 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=1800&q=80',
@@ -211,7 +211,7 @@ class _HeroSectionState extends State<_HeroSection>
             // ── LAYER 1: Aurora orbes animados (parallax 0.6x) ────────────────
             AnimatedBuilder(
               animation: _aurora,
-              builder: (_, __) {
+              builder: (_, _) {
                 final t = _aurora.value;
                 return Stack(
                   children: [
@@ -253,7 +253,7 @@ class _HeroSectionState extends State<_HeroSection>
               offset: Offset(-dx * 0.5, -dy * 0.5),
               child: AnimatedBuilder(
                 animation: _aurora,
-                builder: (_, __) => CustomPaint(
+                builder: (_, _) => CustomPaint(
                   painter: _ParticlePainter(_aurora.value),
                   child: const SizedBox.expand(),
                 ),
@@ -265,7 +265,7 @@ class _HeroSectionState extends State<_HeroSection>
               Positioned.fill(
                 child: AnimatedBuilder(
                   animation: _floatAnim,
-                  builder: (_, __) => Stack(
+                  builder: (_, _) => Stack(
                     children: [
                       _techBadge(
                         'Flutter',
@@ -360,7 +360,7 @@ class _HeroSectionState extends State<_HeroSection>
                         // Badge pulsante
                         AnimatedBuilder(
                           animation: _floatAnim,
-                          builder: (_, __) => Container(
+                          builder: (_, _) => Container(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 14,
                               vertical: 7,
@@ -479,7 +479,19 @@ class _HeroSectionState extends State<_HeroSection>
                           runSpacing: 12,
                           children: [
                             ElevatedButton.icon(
-                              onPressed: () {},
+                              onPressed: () {
+                                final route = AppSession.isAluno
+                                    ? '/student-panel'
+                                    : AppSession.isProfessor
+                                        ? '/painel-professor'
+                                        : AppSession.isAdmin
+                                            ? '/admin'
+                                            : AppSession.isEmpresa
+                                                ? '/painel-empresa'
+                                                : '/login';
+                                Navigator.pushReplacementNamed(
+                                    context, route);
+                              },
                               icon: const Icon(
                                 Icons.explore_outlined,
                                 size: 18,
@@ -508,7 +520,9 @@ class _HeroSectionState extends State<_HeroSection>
                               ),
                             ),
                             OutlinedButton.icon(
-                              onPressed: () {},
+                              onPressed: () =>
+                                  Navigator.pushReplacementNamed(
+                                      context, '/networking'),
                               icon: Icon(
                                 Icons.info_outline,
                                 size: 16,
@@ -1656,9 +1670,8 @@ class _HoverOutlinedButtonState extends State<_HoverOutlinedButton> {
 /// Card com elevação e escala suaves no hover
 class _HoverCard extends StatefulWidget {
   final Widget child;
-  final EdgeInsets? padding;
 
-  const _HoverCard({required this.child, this.padding});
+  const _HoverCard({required this.child});
 
   @override
   State<_HoverCard> createState() => _HoverCardState();

@@ -11,8 +11,10 @@ const _kAllRoutes = {
   'Networking': '/networking',
   'Feedbacks': '/feedbacks',
   'Meu Painel': '/student-panel',
+  'Painel Professor': '/painel-professor',
   'Painel Admin': '/admin',
   'Cadastrar': '/cadastro',
+  'Portfólio': '/painel-empresa',
 };
 
 // Links dinâmicos baseados no perfil logado
@@ -25,11 +27,15 @@ List<String> _navLinks() {
   if (AppSession.isAluno) {
     links.add('Meu Painel');
   }
-  if (AppSession.isAdmin || AppSession.isProfessor) {
-    links.add('Painel Admin');
+  if (AppSession.isProfessor) {
+    links.add('Painel Professor');
   }
   if (AppSession.isAdmin) {
+    links.add('Painel Admin');
     links.add('Cadastrar');
+  }
+  if (AppSession.isEmpresa) {
+    links.add('Portfólio');
   }
   return links;
 }
@@ -225,39 +231,6 @@ class AppNavBar extends StatelessWidget implements PreferredSizeWidget {
     );
   }
 
-  Widget _ctaButton(BuildContext context) {
-    if (AppSession.isLoggedIn) {
-      return OutlinedButton.icon(
-        onPressed: () => _logout(context),
-        icon: const Icon(Icons.logout, size: 16),
-        label: const Text(
-          'Sair',
-          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
-        ),
-        style: OutlinedButton.styleFrom(
-          foregroundColor: AppColors.statusRejectedFg,
-          side: const BorderSide(color: Color(0xFFF4B8B8)),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        ),
-      );
-    }
-    return ElevatedButton(
-      onPressed: () => Navigator.pushReplacementNamed(context, '/login'),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: AppColors.accent,
-        foregroundColor: Colors.white,
-        elevation: 0,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      ),
-      child: const Text(
-        'Entrar / Cadastrar',
-        style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
-      ),
-    );
-  }
-
   Widget _menuButton(BuildContext context) {
     return IconButton(
       icon: const Icon(Icons.menu, color: AppColors.textSecondary),
@@ -269,13 +242,6 @@ class AppNavBar extends StatelessWidget implements PreferredSizeWidget {
 // ─── DRAWER (mobile/tablet) ───────────────────────────────────────────────────
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
-
-  static const _baseLinks = [
-    ('Início', Icons.home_outlined, '/'),
-    ('Dashboard', Icons.dashboard_outlined, '/dashboard'),
-    ('Networking', Icons.people_outline, '/networking'),
-    ('Feedbacks', Icons.feedback_outlined, '/feedbacks'),
-  ];
 
   List<(String, IconData, String)> get _drawerLinks {
     final base = <(String, IconData, String)>[
@@ -289,11 +255,17 @@ class AppDrawer extends StatelessWidget {
     if (AppSession.isAluno) {
       base.add(('Meu Painel', Icons.school_outlined, '/student-panel'));
     }
-    if (AppSession.isAdmin || AppSession.isProfessor) {
-      base.add(('Painel Admin', Icons.shield_outlined, '/admin'));
+    if (AppSession.isProfessor) {
+      base.add(('Painel Professor', Icons.rate_review_outlined,
+          '/painel-professor'));
     }
     if (AppSession.isAdmin) {
+      base.add(('Painel Admin', Icons.shield_outlined, '/admin'));
       base.add(('Cadastrar', Icons.person_add, '/cadastro'));
+    }
+    if (AppSession.isEmpresa) {
+      base.add(('Portfólio', Icons.business_center_outlined,
+          '/painel-empresa'));
     }
     return base;
   }

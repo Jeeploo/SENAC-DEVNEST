@@ -8,6 +8,8 @@ import 'views/feedbacks_view.dart';
 import 'views/dashboard_view.dart';
 import 'views/student_panel_view.dart';
 import 'views/login_view.dart';
+import 'views/painel_professor_view.dart';
+import 'views/painel_empresa_view.dart';
 
 void main() {
   runApp(const SenacDevNestApp());
@@ -23,6 +25,8 @@ final _routes = <String, WidgetBuilder>{
   '/dashboard': (_) => const DashboardView(),
   '/student-panel': (_) => const StudentPanelView(),
   '/cadastro': (_) => const CadastroView(),
+  '/painel-professor': (_) => const PainelProfessorView(),
+  '/painel-empresa': (_) => const PainelEmpresaView(),
 };
 
 // Transição fade para todas as rotas
