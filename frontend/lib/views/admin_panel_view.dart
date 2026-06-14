@@ -56,6 +56,8 @@ class _AdminPanelViewState extends State<AdminPanelView> {
                               _StatsGrid(controller: _controller),
                               const SizedBox(height: 20),
                               _ProjectsCard(controller: _controller),
+                              const SizedBox(height: 20),
+                              _RelatoriosCard(controller: _controller),
                             ],
                           ),
                         ),
@@ -95,7 +97,7 @@ class _PageHeader extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Gestao e Aprovacao de Projetos',
+              Text('Gestão e Aprovação de Projetos',
                   style: TextStyle(
                       fontSize: mobile ? 17 : 22,
                       fontWeight: FontWeight.w700,
@@ -103,8 +105,8 @@ class _PageHeader extends StatelessWidget {
               const SizedBox(height: 2),
               Text(
                   mobile
-                      ? 'Revisao de PIs submetidos'
-                      : 'Painel exclusivo da coordenacao para revisao de PIs submetidos',
+                      ? 'Revisão de PIs submetidos'
+                      : 'Painel exclusivo da coordenacao para revisão de PIs submetidos',
                   style: const TextStyle(
                       fontSize: 12, color: AppColors.textMuted)),
             ],
@@ -331,7 +333,7 @@ class _CardTitle extends StatelessWidget {
     return const Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Fila de Revisao de Projetos',
+        Text('Fila de Revisão de Projetos',
             style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
@@ -728,4 +730,178 @@ class _ProjectsTable extends StatelessWidget {
 
   Widget _cell(Widget child) =>
       Padding(padding: const EdgeInsets.only(right: 8), child: child);
+}
+
+// ─── RELATÓRIOS ──────────────────────────────────────────────────────────────
+class _RelatoriosCard extends StatefulWidget {
+  final AdminController controller;
+  const _RelatoriosCard({required this.controller});
+  @override
+  State<_RelatoriosCard> createState() => _RelatoriosCardState();
+}
+
+class _RelatoriosCardState extends State<_RelatoriosCard> {
+  bool _gerado = false;
+  String _turmaFiltro = 'Todas as Turmas';
+
+  static const _turmas = [
+    'Todas as Turmas','ADS 2024.1','ADS 2024.2','ADS 2023.1',
+    'ADS 2023.2','GTI 2024.1','DS 2024.1',
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final ctrl = widget.controller;
+    final total     = ctrl.filteredProjects.length;
+    final aprovados = ctrl.filteredProjects.where((p) => p.status == ProjectStatus.evaluated).length;
+    final pendentes = ctrl.filteredProjects.where((p) => p.status == ProjectStatus.submitted).length;
+    final reprovados= ctrl.filteredProjects.where((p) => p.status == ProjectStatus.evaluated).length;
+    final taxa      = total > 0 ? (aprovados / total * 100).toStringAsFixed(1) : '0.0';
+
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.border),
+      ),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        // Header
+        Row(children: [
+          Container(width: 40, height: 40,
+            decoration: BoxDecoration(color: const Color(0xFFF3E5F5), borderRadius: BorderRadius.circular(10)),
+            child: const Icon(Icons.assessment_outlined, color: Color(0xFF7B1FA2), size: 20)),
+          const SizedBox(width: 14),
+          const Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text('Geração de Relatórios', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
+            Text('Acompanhamento geral dos Projetos Integradores', style: TextStyle(fontSize: 12, color: AppColors.textMuted)),
+          ])),
+          // Filtro de turma
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            decoration: BoxDecoration(color: AppColors.background, borderRadius: BorderRadius.circular(10), border: Border.all(color: AppColors.border)),
+            child: DropdownButton<String>(
+              value: _turmaFiltro,
+              underline: const SizedBox.shrink(),
+              style: const TextStyle(fontSize: 13, color: AppColors.textPrimary),
+              onChanged: (v) => setState(() { _turmaFiltro = v!; _gerado = false; }),
+              items: _turmas.map((t) => DropdownMenuItem(value: t, child: Text(t))).toList(),
+            ),
+          ),
+        ]),
+        const SizedBox(height: 20),
+        const Divider(color: AppColors.border, height: 1),
+        const SizedBox(height: 20),
+
+        if (!_gerado) ...[
+          // Preview do relatório
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(color: AppColors.background, borderRadius: BorderRadius.circular(12), border: Border.all(color: AppColors.border)),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Row(children: [
+                const Icon(Icons.preview_outlined, size: 16, color: AppColors.textMuted),
+                const SizedBox(width: 6),
+                Text('Pré-visualização — ${_turmaFiltro}', style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textSecondary)),
+              ]),
+              const SizedBox(height: 16),
+              // Stats em linha
+              Row(children: [
+                _RelatStat('Total de PIs', '$total', AppColors.primary),
+                const SizedBox(width: 12),
+                _RelatStat('Aprovados', '$aprovados', AppColors.statusApprovedFg),
+                const SizedBox(width: 12),
+                _RelatStat('Pendentes', '$pendentes', const Color(0xFFF9A825)),
+                const SizedBox(width: 12),
+                _RelatStat('Reprovados', '$reprovados', AppColors.statusRejectedFg),
+                const SizedBox(width: 12),
+                _RelatStat('Taxa Aprovação', '$taxa%', const Color(0xFF7B1FA2)),
+              ]),
+              const SizedBox(height: 16),
+              // Lista dos projetos
+              const Text('Projetos Registrados:', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.textSecondary)),
+              const SizedBox(height: 8),
+              ...ctrl.filteredProjects.take(5).map((p) => Padding(
+                padding: const EdgeInsets.only(bottom: 6),
+                child: Row(children: [
+                  Container(width: 6, height: 6, decoration: BoxDecoration(
+                    color: p.status == ProjectStatus.evaluated
+                        ? AppColors.statusApprovedFg
+                        : p.status == ProjectStatus.submitted
+                            ? const Color(0xFFF9A825)
+                            : AppColors.statusRejectedFg,
+                    shape: BoxShape.circle)),
+                  const SizedBox(width: 8),
+                  Expanded(child: Text(p.title, style: const TextStyle(fontSize: 12, color: AppColors.textSecondary))),
+                  Text(p.classGroupName ?? '-', style: const TextStyle(fontSize: 11, color: AppColors.textMuted)),
+                ]),
+              )),
+              if (ctrl.filteredProjects.length > 5)
+                Text('+ ${ctrl.filteredProjects.length - 5} projetos...', style: const TextStyle(fontSize: 11, color: AppColors.textMuted)),
+            ]),
+          ),
+          const SizedBox(height: 16),
+          Row(children: [
+            Expanded(child: ElevatedButton.icon(
+              onPressed: () => setState(() => _gerado = true),
+              icon: const Icon(Icons.picture_as_pdf_outlined, size: 16),
+              label: const Text('Gerar Relatório PDF', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF7B1FA2), foregroundColor: Colors.white, elevation: 0,
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
+            )),
+            const SizedBox(width: 12),
+            Expanded(child: OutlinedButton.icon(
+              onPressed: () => setState(() => _gerado = true),
+              icon: const Icon(Icons.table_chart_outlined, size: 16),
+              label: const Text('Exportar CSV', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: const Color(0xFF7B1FA2), side: const BorderSide(color: Color(0xFF7B1FA2)),
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
+            )),
+          ]),
+        ] else ...[
+          Container(
+            width: double.infinity, padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(color: const Color(0xFFF3E5F5), borderRadius: BorderRadius.circular(12), border: Border.all(color: const Color(0xFFCE93D8))),
+            child: Column(children: [
+              const Icon(Icons.check_circle_outline, color: Color(0xFF7B1FA2), size: 40),
+              const SizedBox(height: 12),
+              const Text('Relatório gerado com sucesso!', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: Color(0xFF4A148C))),
+              const SizedBox(height: 4),
+              Text('${_turmaFiltro} · $total projetos · Taxa de aprovação: $taxa%',
+                  style: const TextStyle(fontSize: 12, color: Color(0xFF7B1FA2))),
+              const SizedBox(height: 16),
+              Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                OutlinedButton.icon(
+                  onPressed: () => setState(() => _gerado = false),
+                  icon: const Icon(Icons.refresh, size: 16),
+                  label: const Text('Gerar Outro', style: TextStyle(fontSize: 13)),
+                  style: OutlinedButton.styleFrom(foregroundColor: const Color(0xFF7B1FA2), side: const BorderSide(color: Color(0xFF7B1FA2))),
+                ),
+              ]),
+            ]),
+          ),
+        ],
+      ]),
+    );
+  }
+}
+
+class _RelatStat extends StatelessWidget {
+  final String label, value;
+  final Color color;
+  const _RelatStat(this.label, this.value, this.color);
+  @override
+  Widget build(BuildContext context) => Expanded(child: Container(
+    padding: const EdgeInsets.all(12),
+    decoration: BoxDecoration(color: color.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(10), border: Border.all(color: color.withValues(alpha: 0.2))),
+    child: Column(children: [
+      Text(value, style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800, color: color)),
+      const SizedBox(height: 2),
+      Text(label, style: const TextStyle(fontSize: 9, color: AppColors.textMuted), textAlign: TextAlign.center),
+    ]),
+  ));
 }

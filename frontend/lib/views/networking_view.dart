@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 import '../utils/responsive.dart';
 import '../widgets/shared_widgets.dart';
+import '../utils/app_session.dart';
 
 // ─── MODELS ──────────────────────────────────────────────────────────────────
 class _Contact {
@@ -58,9 +59,9 @@ class _Suggestion {
 
 // ─── MOCK DATA ────────────────────────────────────────────────────────────────
 const _kContacts = [
-  _Contact(id: 1, name: 'Joao Silva', initials: 'JS', role: 'Desenvolvedor Full Stack', lastMessage: 'Otimo! Podemos marcar uma reuniao?', online: true, avatarColor: Color(0xFF5C6BC0), badge: 'Aluno'),
+  _Contact(id: 1, name: 'Joao Silva', initials: 'JS', role: 'Desenvolvedor Full Stack', lastMessage: 'Ótimo! Podemos marcar uma reuniao?', online: true, avatarColor: Color(0xFF5C6BC0), badge: 'Aluno'),
   _Contact(id: 2, name: 'Maria Santos', initials: 'MS', role: 'Recrutadora - Tech Corp', lastMessage: 'Vi seu projeto de IoT, muito interessante!', online: true, avatarColor: Color(0xFF8E24AA), badge: 'Recrutador'),
-  _Contact(id: 3, name: 'Pedro Costa', initials: 'PC', role: 'Engenheiro de Software', lastMessage: 'Obrigado pela ajuda no codigo!', online: false, avatarColor: Color(0xFF00838F), badge: 'Empresa'),
+  _Contact(id: 3, name: 'Pedro Costa', initials: 'PC', role: 'Engenheiro de Software', lastMessage: 'Obrigado pela ajuda no código!', online: false, avatarColor: Color(0xFF00838F), badge: 'Empresa'),
   _Contact(id: 4, name: 'Ana Lima', initials: 'AL', role: 'Designer UX/UI', lastMessage: 'Adorei seu prototipo!', online: true, avatarColor: Color(0xFFE53935), badge: 'Aluno'),
 ];
 
@@ -68,24 +69,24 @@ final _kMessages = {
   1: [
     const _Message(text: 'Oi! Vi seu perfil no SENAC DevNest. Seu projeto de automacao e incrivel!', time: '10:10', isMe: false),
     const _Message(text: 'Que legal, obrigado! Trabalhei muito nele.', time: '10:12', isMe: true),
-    const _Message(text: 'Otimo! Podemos marcar uma reuniao?', time: '10:15', isMe: false),
+    const _Message(text: 'Ótimo! Podemos marcar uma reuniao?', time: '10:15', isMe: false),
     const _Message(text: 'Claro, quando voce preferir!', time: '10:17', isMe: true),
   ],
   2: [
-    const _Message(text: 'Ola! Vi seu projeto de Sistema de Automacao Residencial no Observatorio PI.', time: '10:30', isMe: false),
+    const _Message(text: 'Ola! Vi seu projeto de Sistema de Automacao Residencial no Observatório PI.', time: '10:30', isMe: false),
     const _Message(text: 'Ola Maria! Obrigado pelo interesse. Como posso ajudar?', time: '10:32', isMe: true),
     const _Message(text: 'Trabalho na Tech Corp e estamos procurando desenvolvedores com experiencia em IoT. Voce tem interesse em oportunidades?', time: '10:35', isMe: false),
     const _Message(text: 'Sim, tenho muito interesse! Pode me contar mais sobre a vaga?', time: '10:37', isMe: true),
-    const _Message(text: 'Claro! E uma posicao de desenvolvedor junior focada em solucoes IoT. Vou te enviar mais detalhes por email.', time: '10:40', isMe: false),
+    const _Message(text: 'Claro! E uma posição de desenvolvedor junior focada em solucoes IoT. Vou te enviar mais detalhes por email.', time: '10:40', isMe: false),
   ],
   3: [
     const _Message(text: 'Ola! Somos da TechStart e adoramos seu projeto. Tem interesse em uma parceria?', time: '09:00', isMe: false),
     const _Message(text: 'Ola! Sim, com certeza. Me conta mais!', time: '09:05', isMe: true),
-    const _Message(text: 'Obrigado pela ajuda no codigo!', time: '09:20', isMe: false),
+    const _Message(text: 'Obrigado pela ajuda no código!', time: '09:20', isMe: false),
   ],
   4: [
     const _Message(text: 'Seu projeto ficou incrivel! Me inspiro muito nisso.', time: '08:50', isMe: false),
-    const _Message(text: 'Obrigado! O seu prototipo de UX tambem esta otimo!', time: '08:55', isMe: true),
+    const _Message(text: 'Obrigado! O seu prototipo de UX também esta ótimo!', time: '08:55', isMe: true),
     const _Message(text: 'Adorei seu prototipo!', time: '09:00', isMe: false),
   ],
 };
@@ -830,6 +831,249 @@ class _SuggestionCardState extends State<_SuggestionCard> {
           ),
         ),
       ),
+    );
+  }
+}
+
+// ─── PORTFÓLIO PARA EMPRESA PARCEIRA ────────────────────────────────────────
+class _EmpresaPortfolioView extends StatefulWidget {
+  @override
+  State<_EmpresaPortfolioView> createState() => _EmpresaPortfolioViewState();
+}
+
+class _EmpresaPortfolioViewState extends State<_EmpresaPortfolioView> {
+  String _filtroTech = 'Todas';
+  String? _interessado;
+
+  static const _projetos = [
+    _ProjetoEmpresa(
+      id: 1, titulo: 'Sistema de Automação Residencial',
+      aluno: 'Carlos Silva', turma: 'ADS 2024.1',
+      descricao: 'Plataforma IoT para controle automatizado de dispositivos residenciais via app mobile com integração MQTT.',
+      techs: ['Flutter','Node.js','MQTT','PostgreSQL'],
+      nota: 9.0, linkedin: '@carlos.silva',
+    ),
+    _ProjetoEmpresa(
+      id: 2, titulo: 'App de Gestão Acadêmica',
+      aluno: 'Ana Ferreira', turma: 'ADS 2024.1',
+      descricao: 'Aplicativo para gerenciamento de notas, frequências e comunicação entre alunos e professores.',
+      techs: ['Flutter','Firebase','Dart'],
+      nota: 8.5, linkedin: '@ana.ferreira',
+    ),
+    _ProjetoEmpresa(
+      id: 3, titulo: 'E-commerce Sustentável',
+      aluno: 'Pedro Costa', turma: 'ADS 2023.2',
+      descricao: 'Marketplace focado em produtos sustentáveis com rastreabilidade de cadeia de produção.',
+      techs: ['Vue.js','Laravel','MySQL'],
+      nota: 8.0, linkedin: '@pedro.costa',
+    ),
+    _ProjetoEmpresa(
+      id: 4, titulo: 'Dashboard Analytics B2B',
+      aluno: 'Juliana Lima', turma: 'GTI 2024.1',
+      descricao: 'Painel de análise de dados em tempo real para tomada de decisão empresarial.',
+      techs: ['React','Python','PostgreSQL','Chart.js'],
+      nota: 9.5, linkedin: '@juliana.lima',
+    ),
+    _ProjetoEmpresa(
+      id: 5, titulo: 'App de Delivery Local',
+      aluno: 'Ricardo Mendes', turma: 'ADS 2024.2',
+      descricao: 'Plataforma de delivery para comércios locais com rastreamento em tempo real.',
+      techs: ['React Native','Node.js','MongoDB'],
+      nota: 8.8, linkedin: '@ricardo.mendes',
+    ),
+    _ProjetoEmpresa(
+      id: 6, titulo: 'Sistema de Agendamento Médico',
+      aluno: 'Fernanda Souza', turma: 'DS 2024.1',
+      descricao: 'Plataforma de agendamento de consultas com prontuário eletrônico simplificado.',
+      techs: ['Flutter','Firebase','Dart','SQLite'],
+      nota: 9.2, linkedin: '@fernanda.souza',
+    ),
+  ];
+
+  List<String> get _todasTechs {
+    final set = <String>{'Todas'};
+    for (final p in _projetos) { set.addAll(p.techs); }
+    return set.toList()..sort();
+  }
+
+  List<_ProjetoEmpresa> get _filtrados => _filtroTech == 'Todas'
+      ? _projetos
+      : _projetos.where((p) => p.techs.contains(_filtroTech)).toList();
+
+  @override
+  Widget build(BuildContext context) {
+    final mobile = Responsive.isMobile(context);
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      drawer: mobile ? const AppDrawer() : null,
+      body: Column(children: [
+        const AppNavBar(),
+        Expanded(child: SingleChildScrollView(child: ConstrainedBox(
+          constraints: BoxConstraints(minHeight: MediaQuery.of(context).size.height - 60),
+          child: Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            Padding(
+              padding: EdgeInsets.fromLTRB(mobile ? 16 : 40, 28, mobile ? 16 : 40, 32),
+              child: Center(child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 1200),
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+
+                  // Header
+                  Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Container(width: 44, height: 44,
+                      decoration: BoxDecoration(color: const Color(0xFFF3E5F5), borderRadius: BorderRadius.circular(12)),
+                      child: const Icon(Icons.business_center_outlined, color: Color(0xFF7B1FA2), size: 24)),
+                    const SizedBox(width: 14),
+                    Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      const Text('Portfólio de Talentos', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w800, color: AppColors.textPrimary)),
+                      const SizedBox(height: 3),
+                      Text('${_filtrados.length} projetos disponíveis · Identifique e recrute novos talentos',
+                          style: const TextStyle(fontSize: 13, color: AppColors.textSecondary)),
+                    ])),
+                  ]),
+                  const SizedBox(height: 24),
+
+                  // Filtros por tecnologia
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(children: _todasTechs.map((tech) {
+                      final ativo = _filtroTech == tech;
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: GestureDetector(
+                          onTap: () => setState(() => _filtroTech = tech),
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 200),
+                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                            decoration: BoxDecoration(
+                              color: ativo ? const Color(0xFF7B1FA2) : AppColors.surface,
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(color: ativo ? const Color(0xFF7B1FA2) : AppColors.border),
+                            ),
+                            child: Text(tech, style: TextStyle(
+                              fontSize: 12, fontWeight: FontWeight.w600,
+                              color: ativo ? Colors.white : AppColors.textSecondary)),
+                          ),
+                        ),
+                      );
+                    }).toList()),
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Grid de projetos
+                  mobile
+                      ? Column(children: _filtrados.map((p) => Padding(
+                          padding: const EdgeInsets.only(bottom: 16),
+                          child: _ProjetoCard(
+                            projeto: p,
+                            interessado: _interessado == '${p.id}',
+                            onInteresse: () => setState(() => _interessado = '${p.id}'),
+                          ))).toList())
+                      : GridView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: Responsive.isTablet(context) ? 2 : 3,
+                            crossAxisSpacing: 16, mainAxisSpacing: 16,
+                            childAspectRatio: 0.75,
+                          ),
+                          itemCount: _filtrados.length,
+                          itemBuilder: (_, i) => _ProjetoCard(
+                            projeto: _filtrados[i],
+                            interessado: _interessado == '${_filtrados[i].id}',
+                            onInteresse: () => setState(() => _interessado = '${_filtrados[i].id}'),
+                          ),
+                        ),
+                ]),
+              )),
+            ),
+            const AppFooter(),
+          ]),
+        ))),
+      ]),
+    );
+  }
+}
+
+class _ProjetoEmpresa {
+  final int id;
+  final String titulo, aluno, turma, descricao, linkedin;
+  final List<String> techs;
+  final double nota;
+  const _ProjetoEmpresa({required this.id, required this.titulo, required this.aluno,
+      required this.turma, required this.descricao, required this.linkedin,
+      required this.techs, required this.nota});
+}
+
+class _ProjetoCard extends StatelessWidget {
+  final _ProjetoEmpresa projeto;
+  final bool interessado;
+  final VoidCallback onInteresse;
+  const _ProjetoCard({required this.projeto, required this.interessado, required this.onInteresse});
+
+  @override
+  Widget build(BuildContext context) {
+    final p = projeto;
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: interessado ? const Color(0xFF7B1FA2) : AppColors.border,
+            width: interessado ? 2 : 1),
+        boxShadow: interessado ? [BoxShadow(color: const Color(0xFF7B1FA2).withValues(alpha: 0.12), blurRadius: 16)] : null,
+      ),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        // Header do card
+        Row(children: [
+          CircleAvatar(radius: 22,
+            backgroundColor: const Color(0xFFE8EAF6),
+            child: Text(p.aluno.split(' ').map((w) => w[0]).take(2).join(),
+                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: Color(0xFF3949AB)))),
+          const SizedBox(width: 12),
+          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(p.aluno, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
+            Text(p.turma, style: const TextStyle(fontSize: 11, color: AppColors.textMuted)),
+          ])),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(color: AppColors.statusApprovedBg, borderRadius: BorderRadius.circular(8)),
+            child: Text('⭐ ${p.nota.toStringAsFixed(1)}',
+                style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: AppColors.statusApprovedFg)),
+          ),
+        ]),
+        const SizedBox(height: 14),
+        Text(p.titulo, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: AppColors.textPrimary), maxLines: 2, overflow: TextOverflow.ellipsis),
+        const SizedBox(height: 6),
+        Text(p.descricao, style: const TextStyle(fontSize: 11, color: AppColors.textSecondary, height: 1.5), maxLines: 3, overflow: TextOverflow.ellipsis),
+        const SizedBox(height: 12),
+        Wrap(spacing: 6, runSpacing: 4,
+          children: p.techs.map((t) => Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+            decoration: BoxDecoration(color: const Color(0xFFEDE7F6), borderRadius: BorderRadius.circular(8)),
+            child: Text(t, style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: Color(0xFF4527A0))))).toList()),
+        const Spacer(),
+        const SizedBox(height: 12),
+        const Divider(color: AppColors.border, height: 1),
+        const SizedBox(height: 12),
+        Row(children: [
+          Expanded(child: OutlinedButton(
+            onPressed: () {},
+            style: OutlinedButton.styleFrom(
+              foregroundColor: AppColors.textSecondary, side: const BorderSide(color: AppColors.border),
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
+            child: const Text('Ver Projeto', style: TextStyle(fontSize: 12)))),
+          const SizedBox(width: 8),
+          Expanded(child: ElevatedButton(
+            onPressed: interessado ? null : onInteresse,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: interessado ? AppColors.statusApprovedFg : const Color(0xFF7B1FA2),
+              foregroundColor: Colors.white, elevation: 0,
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
+            child: Text(interessado ? '✓ Interesse' : 'Recrutar', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700)))),
+        ]),
+      ]),
     );
   }
 }

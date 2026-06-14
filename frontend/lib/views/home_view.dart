@@ -1,3 +1,4 @@
+import 'dart:math' as dart_math;
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 import '../utils/responsive.dart';
@@ -29,7 +30,8 @@ class _FeaturedProject {
 const _kProjects = [
   _FeaturedProject(
     title: 'Sistema de Automacao Residencial',
-    description: 'Desenvolvimento de um sistema IoT completo para controle e monitoramento de ambientes residenciais...',
+    description:
+        'Desenvolvimento de um sistema IoT completo para controle e monitoramento de ambientes residenciais...',
     category: 'IoT',
     technologies: ['Arduino', 'IoT', 'React Native'],
     classGroup: 'Turma 2024A - Grupo 3',
@@ -38,8 +40,9 @@ const _kProjects = [
     categoryColor: Color(0xFF0288D1),
   ),
   _FeaturedProject(
-    title: 'Aplicativo de Gestao Academica',
-    description: 'Plataforma mobile para gerenciamento de atividades academicas, incluindo notas, frequencia e comunicacao...',
+    title: 'Aplicativo de Gestão Acadêmica',
+    description:
+        'Plataforma mobile para gerenciamento de atividades acadêmicas, incluindo notas, frequência e comúnicação...',
     category: 'Mobile',
     technologies: ['Flutter', 'Firebase', 'UX/UI'],
     classGroup: 'Turma 2024B - Grupo 1',
@@ -49,7 +52,8 @@ const _kProjects = [
   ),
   _FeaturedProject(
     title: 'Prototipo de Impressora 3D Sustentavel',
-    description: 'Desenvolvimento de uma impressora 3D de baixo custo utilizando materiais reciclaveis e filamentos...',
+    description:
+        'Desenvolvimento de uma impressora 3D de baixo custo utilizando materiais reciclaveis e filamentos...',
     category: 'Engenharia',
     technologies: ['Impressao 3D', 'Sustentabilidade', 'Mecanica'],
     classGroup: 'Turma 2023B - Grupo 5',
@@ -59,7 +63,8 @@ const _kProjects = [
   ),
   _FeaturedProject(
     title: 'Plataforma de Aprendizado Adaptativo',
-    description: 'Sistema web com inteligencia artificial que personaliza o conteudo de aprendizado baseado no desempenho do...',
+    description:
+        'Sistema web com inteligencia artificial que personaliza o conteudo de aprendizado baseado no desempenho do...',
     category: 'IA',
     technologies: ['Machine Learning', 'Python', 'React'],
     classGroup: 'Turma 2024A - Grupo 2',
@@ -69,7 +74,8 @@ const _kProjects = [
   ),
   _FeaturedProject(
     title: 'Sistema de Design Colaborativo',
-    description: 'Ferramenta web para equipes de design criarem e compartilharem prototipos de forma colaborativa em...',
+    description:
+        'Ferramenta web para equipes de design criarem e compartilharem prototipos de forma colaborativa em...',
     category: 'Web',
     technologies: ['WebSocket', 'Canvas', 'TypeScript'],
     classGroup: 'Turma 2023A - Grupo 4',
@@ -79,7 +85,8 @@ const _kProjects = [
   ),
   _FeaturedProject(
     title: 'Robo Autonomo de Limpeza',
-    description: 'Desenvolvimento de um robo autonomo com sensores e cameras para navegacao e limpeza de ambientes...',
+    description:
+        'Desenvolvimento de um robo autonomo com sensores e cameras para navegacao e limpeza de ambientes...',
     category: 'Robotica',
     technologies: ['Robotica', 'Computer Vision', 'ROS'],
     classGroup: 'Turma 2024B - Grupo 6',
@@ -89,7 +96,15 @@ const _kProjects = [
   ),
 ];
 
-const _kCategories = ['Todos', 'IoT', 'Mobile', 'Engenharia', 'IA', 'Web', 'Robotica'];
+const _kCategories = [
+  'Todos',
+  'IoT',
+  'Mobile',
+  'Engenharia',
+  'IA',
+  'Web',
+  'Robotica',
+];
 
 // ─── HOME VIEW ────────────────────────────────────────────────────────────────
 class HomeView extends StatelessWidget {
@@ -124,221 +139,592 @@ class HomeView extends StatelessWidget {
   }
 }
 
-// ─── HERO ─────────────────────────────────────────────────────────────────────
-class _HeroSection extends StatelessWidget {
+// ─── HERO — WOW PARALLAX ─────────────────────────────────────────────────────
+class _HeroSection extends StatefulWidget {
   const _HeroSection();
+  @override
+  State<_HeroSection> createState() => _HeroSectionState();
+}
+
+class _HeroSectionState extends State<_HeroSection>
+    with TickerProviderStateMixin {
+  double _mx = 0.5, _my = 0.5;
+  late final AnimationController _aurora;
+  late final AnimationController _float;
+  late final Animation<double> _floatAnim;
+
+  @override
+  void initState() {
+    super.initState();
+    _aurora = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 8),
+    )..repeat();
+    _float = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 4),
+    )..repeat(reverse: true);
+    _floatAnim = CurvedAnimation(parent: _float, curve: Curves.easeInOut);
+  }
+
+  @override
+  void dispose() {
+    _aurora.dispose();
+    _float.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     final mobile = Responsive.isMobile(context);
-    final tablet = Responsive.isTablet(context);
+    final dx = (_mx - 0.5) * 40;
+    final dy = (_my - 0.5) * 30;
 
-    return Container(
-      color: AppColors.surface,
-      padding: EdgeInsets.symmetric(
-        horizontal: mobile ? 20 : tablet ? 32 : 64,
-        vertical: mobile ? 32 : 48,
-      ),
-      child: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 1200),
-          child: mobile
-              ? _mobileHero(context)
-              : _desktopHero(context, tablet),
+    return MouseRegion(
+      onHover: (e) => setState(() {
+        _mx = (e.position.dx / size.width).clamp(0.0, 1.0);
+        _my = (e.position.dy / size.height).clamp(0.0, 1.0);
+      }),
+      child: SizedBox(
+        width: double.infinity,
+        height: mobile ? 520 : 620,
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            // ── LAYER 0: Background image (parallax 0.4x) ─────────────────────
+            Transform(
+              transform: Matrix4.translationValues(-dx * 0.4, -dy * 0.4, 0)
+                ..scale(1.08),
+              alignment: Alignment.center,
+              child: Image.network(
+                'https://images.unsplash.com/photo-1518770660439-4636190af475?w=1800&q=80',
+                fit: BoxFit.cover,
+                errorBuilder: (_, e, s) =>
+                    Container(color: const Color(0xFF060D1A)),
+              ),
+            ),
+
+            // ── Base dark overlay ─────────────────────────────────────────────
+            Container(color: const Color(0xDD060D1A)),
+
+            // ── LAYER 1: Aurora orbes animados (parallax 0.6x) ────────────────
+            AnimatedBuilder(
+              animation: _aurora,
+              builder: (_, __) {
+                final t = _aurora.value;
+                return Stack(
+                  children: [
+                    // Orbe ciano — canto superior esquerdo
+                    _orb(
+                      dx: -dx * 0.6 + size.width * 0.18,
+                      dy: -dy * 0.6 + size.height * 0.15,
+                      r: 320,
+                      color: const Color(0xFF00ACC1).withValues(
+                        alpha: 0.22 + (t * 2 * 3.14159).abs().abs() * 0.08,
+                      ),
+                    ),
+                    // Orbe laranja — canto inferior direito
+                    _orb(
+                      dx: -dx * 0.5 + size.width * 0.78,
+                      dy: -dy * 0.5 + size.height * 0.65,
+                      r: 280,
+                      color: const Color(0xFFFF9800).withValues(
+                        alpha:
+                            0.15 + ((t * 2 + 1) * 3.14159).abs().abs() * 0.07,
+                      ),
+                    ),
+                    // Orbe roxo — centro
+                    _orb(
+                      dx: -dx * 0.35 + size.width * 0.45,
+                      dy: -dy * 0.35 + size.height * 0.3,
+                      r: 200,
+                      color: const Color(0xFF7C3AED).withValues(
+                        alpha: 0.12 + ((t * 1.5) * 3.14159).abs().abs() * 0.05,
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
+
+            // ── LAYER 2: Grid + partículas (parallax 0.5x) ───────────────────
+            Transform.translate(
+              offset: Offset(-dx * 0.5, -dy * 0.5),
+              child: AnimatedBuilder(
+                animation: _aurora,
+                builder: (_, __) => CustomPaint(
+                  painter: _ParticlePainter(_aurora.value),
+                  child: const SizedBox.expand(),
+                ),
+              ),
+            ),
+
+            // ── LAYER 3: Badges tecnologia flutuantes (parallax 0.7x) ─────────
+            if (!mobile) ...[
+              Positioned.fill(
+                child: AnimatedBuilder(
+                  animation: _floatAnim,
+                  builder: (_, __) => Stack(
+                    children: [
+                      _techBadge(
+                        'Flutter',
+                        const Color(0xFF54C5F8),
+                        Icons.phone_iphone,
+                        dx: -dx * 0.7,
+                        dy: -dy * 0.7,
+                        top: 90,
+                        right: 340,
+                      ),
+                      _techBadge(
+                        'Dart',
+                        const Color(0xFF0175C2),
+                        Icons.code,
+                        dx: -dx * 0.65,
+                        dy: -dy * 0.65,
+                        top: 175,
+                        right: 160,
+                        floatOffset: _floatAnim.value * 12 - 6,
+                      ),
+                      _techBadge(
+                        'MySQL',
+                        const Color(0xFF4479A1),
+                        Icons.storage,
+                        dx: -dx * 0.8,
+                        dy: -dy * 0.8,
+                        top: 290,
+                        right: 380,
+                        floatOffset: _floatAnim.value * -8 + 4,
+                      ),
+                      _techBadge(
+                        'GitHub',
+                        Colors.white70,
+                        Icons.hub,
+                        dx: -dx * 0.6,
+                        dy: -dy * 0.6,
+                        top: 390,
+                        right: 220,
+                        floatOffset: _floatAnim.value * 10 - 5,
+                      ),
+                      _techBadge(
+                        'Flutter Web',
+                        AppColors.primary,
+                        Icons.web,
+                        dx: -dx * 0.75,
+                        dy: -dy * 0.75,
+                        top: 480,
+                        right: 350,
+                        floatOffset: _floatAnim.value * -6 + 3,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+
+            // ── Gradiente lateral esquerdo ────────────────────────────────────
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    const Color(0xFF060D1A).withValues(alpha: 0.95),
+                    const Color(0xFF060D1A).withValues(alpha: 0.70),
+                    Colors.transparent,
+                  ],
+                  stops: const [0.0, 0.45, 1.0],
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                ),
+              ),
+            ),
+
+            // ── LAYER 4: Conteúdo (fixo — não move) ──────────────────────────
+            Positioned.fill(
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 1200),
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(
+                      mobile ? 24 : 64,
+                      mobile ? 60 : 0,
+                      mobile ? 24 : 64,
+                      mobile ? 48 : 0,
+                    ),
+                    child: Column(
+                      mainAxisSize: mobile
+                          ? MainAxisSize.min
+                          : MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Badge pulsante
+                        AnimatedBuilder(
+                          animation: _floatAnim,
+                          builder: (_, __) => Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 14,
+                              vertical: 7,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppColors.primary.withValues(
+                                alpha: 0.12 + _floatAnim.value * 0.06,
+                              ),
+                              borderRadius: BorderRadius.circular(24),
+                              border: Border.all(
+                                color: AppColors.primary.withValues(
+                                  alpha: 0.35 + _floatAnim.value * 0.15,
+                                ),
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AppColors.primary.withValues(
+                                    alpha: 0.15 + _floatAnim.value * 0.10,
+                                  ),
+                                  blurRadius: 16,
+                                ),
+                              ],
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Container(
+                                  width: 7,
+                                  height: 7,
+                                  decoration: BoxDecoration(
+                                    color: AppColors.primary,
+                                    shape: BoxShape.circle,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: AppColors.primary.withValues(
+                                          alpha: 0.6,
+                                        ),
+                                        blurRadius: 6,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                const Text(
+                                  'Observatório de Projetos Integradores',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: AppColors.primary,
+                                    fontWeight: FontWeight.w600,
+                                    letterSpacing: 0.3,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: mobile ? 18 : 22),
+
+                        // Título principal
+                        Text(
+                          'Descubra os',
+                          style: TextStyle(
+                            fontSize: mobile ? 28 : 50,
+                            fontWeight: FontWeight.w900,
+                            color: Colors.white.withValues(alpha: 0.9),
+                            height: 1.1,
+                          ),
+                        ),
+                        ShaderMask(
+                          shaderCallback: (b) => const LinearGradient(
+                            colors: [
+                              Color(0xFF00ACC1),
+                              Color(0xFF80DEEA),
+                              Color(0xFF00ACC1),
+                            ],
+                            stops: [0.0, 0.5, 1.0],
+                          ).createShader(b),
+                          child: Text(
+                            'Projetos Integradores',
+                            style: TextStyle(
+                              fontSize: mobile ? 30 : 54,
+                              fontWeight: FontWeight.w900,
+                              color: Colors.white,
+                              height: 1.1,
+                            ),
+                          ),
+                        ),
+                        Text(
+                          'da nossa faculdade',
+                          style: TextStyle(
+                            fontSize: mobile ? 28 : 50,
+                            fontWeight: FontWeight.w900,
+                            color: Colors.white.withValues(alpha: 0.9),
+                            height: 1.1,
+                          ),
+                        ),
+                        SizedBox(height: mobile ? 16 : 22),
+
+                        // Subtítulo
+                        ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 500),
+                          child: Text(
+                            'Um repositório centralizado de todos os projetos desenvolvidos pelos alunos. Explore ideias inovadoras, colabore e inspire-se.',
+                            style: TextStyle(
+                              fontSize: mobile ? 13 : 16,
+                              color: Colors.white.withValues(alpha: 0.65),
+                              height: 1.7,
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: mobile ? 28 : 36),
+
+                        // Botões
+                        Wrap(
+                          spacing: 12,
+                          runSpacing: 12,
+                          children: [
+                            ElevatedButton.icon(
+                              onPressed: () {},
+                              icon: const Icon(
+                                Icons.explore_outlined,
+                                size: 18,
+                              ),
+                              label: const Text(
+                                'Explorar Projetos',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.primary,
+                                foregroundColor: Colors.white,
+                                elevation: 0,
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: mobile ? 20 : 28,
+                                  vertical: 15,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                shadowColor: AppColors.primary.withValues(
+                                  alpha: 0.4,
+                                ),
+                              ),
+                            ),
+                            OutlinedButton.icon(
+                              onPressed: () {},
+                              icon: Icon(
+                                Icons.info_outline,
+                                size: 16,
+                                color: Colors.white.withValues(alpha: 0.7),
+                              ),
+                              label: Text(
+                                'Sobre o Observatório',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white.withValues(alpha: 0.85),
+                                ),
+                              ),
+                              style: OutlinedButton.styleFrom(
+                                side: BorderSide(
+                                  color: Colors.white.withValues(alpha: 0.25),
+                                ),
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: mobile ? 20 : 28,
+                                  vertical: 15,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: mobile ? 28 : 36),
+
+                        // Mini stats — preenche espaço e reforça credibilidade
+                        Wrap(
+                          spacing: 0,
+                          runSpacing: 12,
+                          children: [
+                            _MiniStat(value: '150+', label: 'Projetos'),
+                            _MiniDivider(),
+                            _MiniStat(value: '500+', label: 'Alunos'),
+                            _MiniDivider(),
+                            _MiniStat(value: '20+', label: 'Turmas'),
+                            _MiniDivider(),
+                            _MiniStat(value: '15', label: 'Premiados'),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _desktopHero(BuildContext context, bool tablet) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Expanded(flex: tablet ? 6 : 5, child: _heroText(context)),
-        const SizedBox(width: 40),
-        Expanded(flex: tablet ? 5 : 5, child: _heroImage()),
-      ],
-    );
-  }
-
-  Widget _mobileHero(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _heroBadge(),
-        const SizedBox(height: 20),
-        _heroTitle(context),
-        const SizedBox(height: 16),
-        _heroSubtitle(),
-        const SizedBox(height: 28),
-        _heroImage(),
-        const SizedBox(height: 28),
-        _heroButtons(context),
-        const SizedBox(height: 28),
-        _heroStats(),
-      ],
-    );
-  }
-
-  Widget _heroText(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _heroBadge(),
-        const SizedBox(height: 24),
-        _heroTitle(context),
-        const SizedBox(height: 20),
-        _heroSubtitle(),
-        const SizedBox(height: 32),
-        _heroButtons(context),
-        const SizedBox(height: 40),
-        _heroStats(),
-      ],
-    );
-  }
-
-  Widget _heroBadge() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
-      decoration: BoxDecoration(
-        border: Border.all(color: AppColors.border),
-        borderRadius: BorderRadius.circular(20),
-        color: AppColors.surface,
+  Widget _orb({
+    required double dx,
+    required double dy,
+    required double r,
+    required Color color,
+  }) {
+    return Positioned(
+      left: dx - r,
+      top: dy - r,
+      child: Container(
+        width: r * 2,
+        height: r * 2,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          gradient: RadialGradient(colors: [color, color.withValues(alpha: 0)]),
+        ),
       ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Icon(Icons.trending_up, size: 14, color: AppColors.primary),
-          const SizedBox(width: 6),
-          Text('Mais de 150 projetos publicados',
+    );
+  }
+
+  Widget _techBadge(
+    String label,
+    Color color,
+    IconData icon, {
+    required double dx,
+    required double dy,
+    required double top,
+    required double right,
+    double floatOffset = 0,
+  }) {
+    return Positioned(
+      top: top + floatOffset,
+      right: right + dx,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        decoration: BoxDecoration(
+          color: Colors.black.withValues(alpha: 0.45),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: color.withValues(alpha: 0.45)),
+          boxShadow: [
+            BoxShadow(color: color.withValues(alpha: 0.18), blurRadius: 14),
+          ],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, color: color, size: 14),
+            const SizedBox(width: 6),
+            Text(
+              label,
               style: TextStyle(
-                  fontSize: 12,
-                  color: AppColors.textSecondary,
-                  fontWeight: FontWeight.w500)),
-        ],
+                fontSize: 12,
+                color: color,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
+}
 
-  Widget _heroTitle(BuildContext context) {
-    final fontSize = Responsive.value(context,
-        mobile: 30.0, tablet: 36.0, desktop: 44.0);
-    return RichText(
-      text: TextSpan(
-        style: TextStyle(
-            fontSize: fontSize,
-            fontWeight: FontWeight.w800,
-            color: AppColors.textPrimary,
-            height: 1.15),
-        children: const [
-          TextSpan(text: 'Descubra os '),
-          TextSpan(
-              text: 'Projetos Integradores',
-              style: TextStyle(color: AppColors.primary)),
-          TextSpan(text: ' da nossa faculdade'),
-        ],
-      ),
-    );
-  }
+// ─── PARTICLE PAINTER ─────────────────────────────────────────────────────────
+class _ParticlePainter extends CustomPainter {
+  final double t;
+  _ParticlePainter(this.t);
 
-  Widget _heroSubtitle() {
-    return const Text(
-      'Um repositorio centralizado de todos os projetos desenvolvidos pelos alunos. Explore ideias inovadoras, colabore e inspire-se.',
-      style: TextStyle(
-          fontSize: 15,
-          color: AppColors.textSecondary,
-          height: 1.7),
-    );
-  }
+  static const _pts = [
+    (0.1, 0.2),
+    (0.25, 0.7),
+    (0.4, 0.15),
+    (0.55, 0.6),
+    (0.7, 0.25),
+    (0.85, 0.75),
+    (0.15, 0.5),
+    (0.6, 0.4),
+    (0.9, 0.1),
+    (0.35, 0.85),
+    (0.75, 0.55),
+    (0.5, 0.9),
+    (0.8, 0.35),
+    (0.2, 0.35),
+    (0.65, 0.8),
+  ];
 
-  Widget _heroButtons(BuildContext context) {
-    final mobile = Responsive.isMobile(context);
-    final buttons = [
-      _HoverFilledButton(
-        label: 'Explorar Projetos',
-        icon: Icons.arrow_forward,
-        color: AppColors.primary,
-        onTap: () {},
-      ),
-      _HoverOutlinedButton(
-        label: 'Sobre o Observatorio',
-        onTap: () {},
-      ),
-    ];
+  @override
+  void paint(Canvas canvas, Size size) {
+    // Grid
+    final gridPaint = Paint()
+      ..color = Colors.white.withValues(alpha: 0.025)
+      ..strokeWidth = 1;
+    for (double x = 0; x < size.width; x += 70) {
+      canvas.drawLine(Offset(x, 0), Offset(x, size.height), gridPaint);
+    }
+    for (double y = 0; y < size.height; y += 70) {
+      canvas.drawLine(Offset(0, y), Offset(size.width, y), gridPaint);
+    }
 
-    if (mobile) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          buttons[0],
-          const SizedBox(height: 10),
-          buttons[1],
-        ],
+    // Partículas
+    for (final (px, py) in _pts) {
+      final x = px * size.width;
+      final y = py * size.height + (t * 2 * 3.14159 + px * 6.28).abs() * 8;
+      final alpha = 0.15 + ((t * 6.28 + py * 6.28).abs().abs()) * 0.25;
+      final r = 1.5 + (px + py) * 2;
+      canvas.drawCircle(
+        Offset(x, y),
+        r,
+        Paint()..color = const Color(0xFF00ACC1).withValues(alpha: alpha),
       );
     }
-    return Row(
+  }
+
+  @override
+  bool shouldRepaint(_ParticlePainter old) => old.t != t;
+}
+
+// ─── MINI STATS (hero) ────────────────────────────────────────────────────────
+class _MiniStat extends StatelessWidget {
+  final String value, label;
+  const _MiniStat({required this.value, required this.label});
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        buttons[0],
-        const SizedBox(width: 14),
-        buttons[1],
-      ],
-    );
-  }
-
-  Widget _heroStats() {
-    const stats = [
-      ('150+', 'Projetos'),
-      ('20+', 'Turmas'),
-      ('500+', 'Alunos'),
-    ];
-    return Row(
-      children: stats
-          .expand((s) => [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(s.$1,
-                        style: const TextStyle(
-                            fontSize: 26,
-                            fontWeight: FontWeight.w800,
-                            color: AppColors.textPrimary)),
-                    Text(s.$2,
-                        style: const TextStyle(
-                            fontSize: 13,
-                            color: AppColors.textSecondary)),
-                  ],
-                ),
-                const SizedBox(width: 32),
-              ])
-          .toList(),
-    );
-  }
-
-  Widget _heroImage() {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(20),
-      child: Image.network(
-        'https://picsum.photos/seed/students-group/600/450',
-        fit: BoxFit.cover,
-        errorBuilder: (_, __, ___) => Container(
-          height: 380,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                AppColors.primary.withValues(alpha: 0.15),
-                AppColors.secondary.withValues(alpha: 0.25),
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
-          child: const Center(
-            child: Icon(Icons.people_outline, size: 80, color: AppColors.primary),
+        Text(
+          value,
+          style: const TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.w900,
+            color: Colors.white,
+            height: 1.1,
           ),
         ),
-      ),
-    );
-  }
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 11,
+            color: Colors.white.withValues(alpha: 0.55),
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+class _MiniDivider extends StatelessWidget {
+  const _MiniDivider();
+  @override
+  Widget build(BuildContext context) => Container(
+    width: 1,
+    height: 36,
+    margin: const EdgeInsets.symmetric(vertical: 4),
+    color: Colors.white.withValues(alpha: 0.15),
+  );
 }
 
 // ─── STATS SECTION ────────────────────────────────────────────────────────────
@@ -346,10 +732,34 @@ class _StatsSection extends StatelessWidget {
   const _StatsSection();
 
   static const _stats = [
-    (value: '150+', label: 'Projetos Publicados',   icon: Icons.code,          bg: Color(0xFFE3F2FD), iconColor: Color(0xFF1565C0)),
-    (value: '20+',  label: 'Turmas Participantes',  icon: Icons.trending_up,   bg: Color(0xFFF3E5F5), iconColor: Color(0xFF6A1B9A)),
-    (value: '500+', label: 'Alunos Envolvidos',     icon: Icons.lightbulb_outline, bg: Color(0xFFFCE4EC), iconColor: Color(0xFFC2185B)),
-    (value: '15',   label: 'Projetos Premiados',    icon: Icons.rocket_launch,  bg: Color(0xFFFFF3E0), iconColor: Color(0xFFE65100)),
+    (
+      value: '150+',
+      label: 'Projetos Públicados',
+      icon: Icons.code,
+      bg: Color(0xFFE3F2FD),
+      iconColor: Color(0xFF1565C0),
+    ),
+    (
+      value: '20+',
+      label: 'Turmas Participantes',
+      icon: Icons.trending_up,
+      bg: Color(0xFFF3E5F5),
+      iconColor: Color(0xFF6A1B9A),
+    ),
+    (
+      value: '500+',
+      label: 'Alunos Envolvidos',
+      icon: Icons.lightbulb_outline,
+      bg: Color(0xFFFCE4EC),
+      iconColor: Color(0xFFC2185B),
+    ),
+    (
+      value: '15',
+      label: 'Projetos Premiados',
+      icon: Icons.rocket_launch,
+      bg: Color(0xFFFFF3E0),
+      iconColor: Color(0xFFE65100),
+    ),
   ];
 
   @override
@@ -357,28 +767,46 @@ class _StatsSection extends StatelessWidget {
     final mobile = Responsive.isMobile(context);
     return Container(
       color: AppColors.background,
-      padding: EdgeInsets.symmetric(
-          horizontal: mobile ? 20 : 64, vertical: 40),
+      padding: EdgeInsets.symmetric(horizontal: mobile ? 20 : 64, vertical: 40),
       child: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 1200),
           child: mobile
-              ? Column(children: _stats.map(_buildCard).toList()
-                    .expand((w) => [w, const SizedBox(height: 16)]).toList()
-                    ..removeLast())
+              ? Column(
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(child: _buildCard(_stats[0])),
+                        const SizedBox(width: 12),
+                        Expanded(child: _buildCard(_stats[1])),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        Expanded(child: _buildCard(_stats[2])),
+                        const SizedBox(width: 12),
+                        Expanded(child: _buildCard(_stats[3])),
+                      ],
+                    ),
+                  ],
+                )
               : Row(
-                  children: _stats
-                      .map((s) => Expanded(child: _buildCard(s)))
-                      .expand((w) => [w, const SizedBox(width: 20)])
-                      .toList()
-                    ..removeLast(),
+                  children:
+                      _stats
+                          .map((s) => Expanded(child: _buildCard(s)))
+                          .expand((w) => [w, const SizedBox(width: 20)])
+                          .toList()
+                        ..removeLast(),
                 ),
         ),
       ),
     );
   }
 
-  Widget _buildCard(({String value, String label, IconData icon, Color bg, Color iconColor}) s) {
+  Widget _buildCard(
+    ({String value, String label, IconData icon, Color bg, Color iconColor}) s,
+  ) {
     return _StatHoverCard(stat: s);
   }
 }
@@ -403,7 +831,11 @@ class _FeaturedProjectsSectionState extends State<_FeaturedProjectsSection> {
   Widget build(BuildContext context) {
     final mobile = Responsive.isMobile(context);
     final tablet = Responsive.isTablet(context);
-    final hPad = mobile ? 20.0 : tablet ? 32.0 : 64.0;
+    final hPad = mobile
+        ? 20.0
+        : tablet
+        ? 32.0
+        : 64.0;
 
     return Container(
       color: AppColors.surface,
@@ -422,29 +854,45 @@ class _FeaturedProjectsSectionState extends State<_FeaturedProjectsSection> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Projetos em Destaque',
-                            style: TextStyle(
-                                fontSize: 26,
-                                fontWeight: FontWeight.w800,
-                                color: AppColors.textPrimary)),
+                        Text(
+                          'Projetos em Destaque',
+                          style: TextStyle(
+                            fontSize: 26,
+                            fontWeight: FontWeight.w800,
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
                         SizedBox(height: 6),
-                        Text('Conheca os projetos mais inovadores desenvolvidos pelos nossos alunos',
-                            style: TextStyle(
-                                fontSize: 13, color: AppColors.textSecondary)),
+                        Text(
+                          'Conheca os projetos mais inovadores desenvolvidos pelos nossos alunos',
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: AppColors.textSecondary,
+                          ),
+                        ),
                       ],
                     ),
                   ),
                   OutlinedButton.icon(
                     onPressed: () {},
                     icon: const Icon(Icons.filter_list, size: 16),
-                    label: const Text('Filtrar',
-                        style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+                    label: const Text(
+                      'Filtrar',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: AppColors.textPrimary,
                       side: const BorderSide(color: AppColors.border),
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 10,
+                      ),
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8)),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                     ),
                   ),
                 ],
@@ -463,20 +911,30 @@ class _FeaturedProjectsSectionState extends State<_FeaturedProjectsSection> {
                         onTap: () => setState(() => _selectedCategory = cat),
                         child: Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 7),
+                            horizontal: 16,
+                            vertical: 7,
+                          ),
                           decoration: BoxDecoration(
-                            color: active ? AppColors.primary : AppColors.surface,
+                            color: active
+                                ? AppColors.primary
+                                : AppColors.surface,
                             borderRadius: BorderRadius.circular(20),
                             border: Border.all(
-                                color: active ? AppColors.primary : AppColors.border),
+                              color: active
+                                  ? AppColors.primary
+                                  : AppColors.border,
+                            ),
                           ),
-                          child: Text(cat,
-                              style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                  color: active
-                                      ? Colors.white
-                                      : AppColors.textSecondary)),
+                          child: Text(
+                            cat,
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              color: active
+                                  ? Colors.white
+                                  : AppColors.textSecondary,
+                            ),
+                          ),
                         ),
                       ),
                     );
@@ -489,10 +947,12 @@ class _FeaturedProjectsSectionState extends State<_FeaturedProjectsSection> {
               if (mobile)
                 Column(
                   children: _filtered
-                      .map((p) => Padding(
-                            padding: const EdgeInsets.only(bottom: 20),
-                            child: _ProjectCard(project: p),
-                          ))
+                      .map(
+                        (p) => Padding(
+                          padding: const EdgeInsets.only(bottom: 20),
+                          child: _ProjectCard(project: p),
+                        ),
+                      )
                       .toList(),
                 )
               else
@@ -506,7 +966,10 @@ class _FeaturedProjectsSectionState extends State<_FeaturedProjectsSection> {
                   label: 'Ver Todos os Projetos',
                   color: AppColors.primary,
                   onTap: () {},
-                  padding: const EdgeInsets.symmetric(horizontal: 36, vertical: 16),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 36,
+                    vertical: 16,
+                  ),
                   fontSize: 15,
                 ),
               ),
@@ -528,13 +991,18 @@ class _FeaturedProjectsSectionState extends State<_FeaturedProjectsSection> {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: rowItems
-                .map((p) => Expanded(child: Padding(
+                .map(
+                  (p) => Expanded(
+                    child: Padding(
                       padding: EdgeInsets.only(
-                          right: rowItems.indexOf(p) < rowItems.length - 1
-                              ? 20
-                              : 0),
+                        right: rowItems.indexOf(p) < rowItems.length - 1
+                            ? 20
+                            : 0,
+                      ),
                       child: _ProjectCard(project: p),
-                    )))
+                    ),
+                  ),
+                )
                 .toList(),
           ),
         ),
@@ -577,11 +1045,13 @@ class _ProjectCardState extends State<_ProjectCard> {
               color: _hovered ? AppColors.primary : AppColors.border,
             ),
             boxShadow: _hovered
-                ? [BoxShadow(
-                    color: AppColors.primary.withValues(alpha: 0.10),
-                    blurRadius: 20,
-                    offset: const Offset(0, 8),
-                  )]
+                ? [
+                    BoxShadow(
+                      color: AppColors.primary.withValues(alpha: 0.10),
+                      blurRadius: 20,
+                      offset: const Offset(0, 8),
+                    ),
+                  ]
                 : [],
           ),
           child: Column(
@@ -596,31 +1066,43 @@ class _ProjectCardState extends State<_ProjectCard> {
                     child: Image.network(
                       p.imageUrl,
                       fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => Container(
+                      errorBuilder: (_, e, s) => Container(
                         color: p.categoryColor.withValues(alpha: 0.1),
                         child: Center(
-                          child: Icon(Icons.image_outlined,
-                              size: 48, color: p.categoryColor),
+                          child: Icon(
+                            Icons.image_outlined,
+                            size: 48,
+                            color: p.categoryColor,
+                          ),
                         ),
                       ),
                     ),
                   ),
                   Positioned(
-                    top: 12, right: 12,
+                    top: 12,
+                    right: 12,
                     child: Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 5),
+                        horizontal: 12,
+                        vertical: 5,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(20),
-                        boxShadow: [BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.08),
-                          blurRadius: 8,
-                        )],
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.08),
+                            blurRadius: 8,
+                          ),
+                        ],
                       ),
-                      child: Text(p.category,
-                          style: const TextStyle(
-                              fontSize: 11, fontWeight: FontWeight.w600)),
+                      child: Text(
+                        p.category,
+                        style: const TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                     ),
                   ),
                 ],
@@ -638,62 +1120,94 @@ class _ProjectCardState extends State<_ProjectCard> {
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w700,
-                        color: _hovered ? AppColors.primary : AppColors.textPrimary,
+                        color: _hovered
+                            ? AppColors.primary
+                            : AppColors.textPrimary,
                       ),
-                      child: Text(p.title,
-                          maxLines: 2, overflow: TextOverflow.ellipsis),
+                      child: Text(
+                        p.title,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                     const SizedBox(height: 8),
-                    Text(p.description,
-                        style: const TextStyle(
-                            fontSize: 12,
-                            color: AppColors.textSecondary,
-                            height: 1.5),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis),
+                    Text(
+                      p.description,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: AppColors.textSecondary,
+                        height: 1.5,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                     const SizedBox(height: 12),
                     Wrap(
-                      spacing: 6, runSpacing: 6,
-                      children: p.technologies.map((t) => Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: AppColors.background,
-                              borderRadius: BorderRadius.circular(6),
-                              border: Border.all(color: AppColors.border),
-                            ),
-                            child: Text(t,
+                      spacing: 6,
+                      runSpacing: 6,
+                      children: p.technologies
+                          .map(
+                            (t) => Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: AppColors.background,
+                                borderRadius: BorderRadius.circular(6),
+                                border: Border.all(color: AppColors.border),
+                              ),
+                              child: Text(
+                                t,
                                 style: const TextStyle(
-                                    fontSize: 11,
-                                    color: AppColors.textSecondary,
-                                    fontWeight: FontWeight.w500)),
-                          )).toList(),
+                                  fontSize: 11,
+                                  color: AppColors.textSecondary,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          )
+                          .toList(),
                     ),
                     const SizedBox(height: 14),
                     const Divider(color: AppColors.border, height: 1),
                     const SizedBox(height: 12),
                     Row(
                       children: [
-                        const Icon(Icons.people_outline,
-                            size: 13, color: AppColors.textMuted),
+                        const Icon(
+                          Icons.people_outline,
+                          size: 13,
+                          color: AppColors.textMuted,
+                        ),
                         const SizedBox(width: 5),
                         Expanded(
-                          child: Text(p.classGroup,
-                              style: const TextStyle(
-                                  fontSize: 11, color: AppColors.textSecondary),
-                              overflow: TextOverflow.ellipsis),
+                          child: Text(
+                            p.classGroup,
+                            style: const TextStyle(
+                              fontSize: 11,
+                              color: AppColors.textSecondary,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
                       ],
                     ),
                     const SizedBox(height: 5),
                     Row(
                       children: [
-                        const Icon(Icons.calendar_today_outlined,
-                            size: 13, color: AppColors.textMuted),
+                        const Icon(
+                          Icons.calendar_today_outlined,
+                          size: 13,
+                          color: AppColors.textMuted,
+                        ),
                         const SizedBox(width: 5),
-                        Text(p.year,
-                            style: const TextStyle(
-                                fontSize: 11, color: AppColors.textSecondary)),
+                        Text(
+                          p.year,
+                          style: const TextStyle(
+                            fontSize: 11,
+                            color: AppColors.textSecondary,
+                          ),
+                        ),
                       ],
                     ),
                   ],
@@ -712,17 +1226,38 @@ class _WhySection extends StatelessWidget {
   const _WhySection();
 
   static const _features = [
-    (icon: Icons.search, title: 'Busca Avancada',         desc: 'Encontre projetos por categoria, turma, tecnologia ou palavras-chave.'),
-    (icon: Icons.menu_book, title: 'Documentacao Completa', desc: 'Acesse relatorios, codigo-fonte e apresentacoes de cada projeto.'),
-    (icon: Icons.emoji_events_outlined, title: 'Projetos Premiados',    desc: 'Veja os projetos que se destacaram em competicoes e eventos.'),
-    (icon: Icons.group_outlined, title: 'Colaboracao',           desc: 'Conecte-se com os autores e colabore em novos projetos.'),
+    (
+      icon: Icons.search,
+      title: 'Busca Avancada',
+      desc:
+          'Encontre projetos por categoria, turma, tecnologia ou palavras-chave.',
+    ),
+    (
+      icon: Icons.menu_book,
+      title: 'Documentacao Completa',
+      desc: 'Acesse relatórios, código-fonte e apresentações de cada projeto.',
+    ),
+    (
+      icon: Icons.emoji_events_outlined,
+      title: 'Projetos Premiados',
+      desc: 'Veja os projetos que se destacaram em competicoes e eventos.',
+    ),
+    (
+      icon: Icons.group_outlined,
+      title: 'Colaboração',
+      desc: 'Conecte-se com os autores e colabore em novos projetos.',
+    ),
   ];
 
   @override
   Widget build(BuildContext context) {
     final mobile = Responsive.isMobile(context);
     final tablet = Responsive.isTablet(context);
-    final hPad = mobile ? 20.0 : tablet ? 32.0 : 64.0;
+    final hPad = mobile
+        ? 20.0
+        : tablet
+        ? 32.0
+        : 64.0;
 
     return Container(
       color: AppColors.background,
@@ -732,43 +1267,54 @@ class _WhySection extends StatelessWidget {
           constraints: const BoxConstraints(maxWidth: 1200),
           child: Column(
             children: [
-              const Text('Por que usar o SENAC DevNest?',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      fontSize: 26,
-                      fontWeight: FontWeight.w800,
-                      color: AppColors.textPrimary)),
+              const Text(
+                'Por que usar o SENAC DevNest?',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 26,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.textPrimary,
+                ),
+              ),
               const SizedBox(height: 12),
               const Text(
-                  'Uma plataforma completa para explorar, compartilhar e colaborar em projetos academicos',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      fontSize: 14,
-                      color: AppColors.textSecondary,
-                      height: 1.6)),
+                'Uma plataforma completa para explorar, compartilhar e colaborar em projetos acadêmicos',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: AppColors.textSecondary,
+                  height: 1.6,
+                ),
+              ),
               const SizedBox(height: 40),
               mobile
                   ? Column(
                       children: _features
-                          .map((f) => Padding(
-                                padding: const EdgeInsets.only(bottom: 16),
-                                child: _FeatureCard(feature: f),
-                              ))
+                          .map(
+                            (f) => Padding(
+                              padding: const EdgeInsets.only(bottom: 16),
+                              child: _FeatureCard(feature: f),
+                            ),
+                          )
                           .toList(),
                     )
                   : Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: _features
-                          .map((f) => Expanded(
-                                child: Padding(
-                                  padding: EdgeInsets.only(
-                                      right: _features.indexOf(f) <
-                                              _features.length - 1
-                                          ? 16
-                                          : 0),
-                                  child: _FeatureCard(feature: f),
+                          .map(
+                            (f) => Expanded(
+                              child: Padding(
+                                padding: EdgeInsets.only(
+                                  right:
+                                      _features.indexOf(f) <
+                                          _features.length - 1
+                                      ? 16
+                                      : 0,
                                 ),
-                              ))
+                                child: _FeatureCard(feature: f),
+                              ),
+                            ),
+                          )
                           .toList(),
                     ),
             ],
@@ -811,11 +1357,13 @@ class _FeatureCardState extends State<_FeatureCard> {
               color: _hovered ? AppColors.primary : AppColors.border,
             ),
             boxShadow: _hovered
-                ? [BoxShadow(
-                    color: AppColors.primary.withValues(alpha: 0.10),
-                    blurRadius: 20,
-                    offset: const Offset(0, 8),
-                  )]
+                ? [
+                    BoxShadow(
+                      color: AppColors.primary.withValues(alpha: 0.10),
+                      blurRadius: 20,
+                      offset: const Offset(0, 8),
+                    ),
+                  ]
                 : [],
           ),
           child: Column(
@@ -823,7 +1371,8 @@ class _FeatureCardState extends State<_FeatureCard> {
             children: [
               AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
-                width: 52, height: 52,
+                width: 52,
+                height: 52,
                 decoration: BoxDecoration(
                   gradient: _hovered
                       ? const LinearGradient(
@@ -839,22 +1388,30 @@ class _FeatureCardState extends State<_FeatureCard> {
                         ),
                   borderRadius: BorderRadius.circular(14),
                 ),
-                child: Icon(widget.feature.icon,
-                    color: _hovered ? Colors.white : AppColors.primary,
-                    size: 24),
+                child: Icon(
+                  widget.feature.icon,
+                  color: _hovered ? Colors.white : AppColors.primary,
+                  size: 24,
+                ),
               ),
               const SizedBox(height: 16),
-              Text(widget.feature.title,
-                  style: const TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.textPrimary)),
+              Text(
+                widget.feature.title,
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.textPrimary,
+                ),
+              ),
               const SizedBox(height: 8),
-              Text(widget.feature.desc,
-                  style: const TextStyle(
-                      fontSize: 13,
-                      color: AppColors.textSecondary,
-                      height: 1.6)),
+              Text(
+                widget.feature.desc,
+                style: const TextStyle(
+                  fontSize: 13,
+                  color: AppColors.textSecondary,
+                  height: 1.6,
+                ),
+              ),
             ],
           ),
         ),
@@ -863,11 +1420,10 @@ class _FeatureCardState extends State<_FeatureCard> {
   }
 }
 
-
-
 // ─── STAT HOVER CARD ─────────────────────────────────────────────────────────
 class _StatHoverCard extends StatefulWidget {
-  final ({String value, String label, IconData icon, Color bg, Color iconColor}) stat;
+  final ({String value, String label, IconData icon, Color bg, Color iconColor})
+  stat;
   const _StatHoverCard({required this.stat});
 
   @override
@@ -896,20 +1452,25 @@ class _StatHoverCardState extends State<_StatHoverCard> {
             color: _hovered ? s.bg.withValues(alpha: 0.3) : AppColors.surface,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: _hovered ? s.iconColor.withValues(alpha: 0.4) : AppColors.border,
+              color: _hovered
+                  ? s.iconColor.withValues(alpha: 0.4)
+                  : AppColors.border,
             ),
             boxShadow: _hovered
-                ? [BoxShadow(
-                    color: s.iconColor.withValues(alpha: 0.12),
-                    blurRadius: 18,
-                    offset: const Offset(0, 6),
-                  )]
+                ? [
+                    BoxShadow(
+                      color: s.iconColor.withValues(alpha: 0.12),
+                      blurRadius: 18,
+                      offset: const Offset(0, 6),
+                    ),
+                  ]
                 : [],
           ),
           child: Stack(
             children: [
               Positioned(
-                top: -10, right: -10,
+                top: -10,
+                right: -10,
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
                   width: _hovered ? 90 : 80,
@@ -924,7 +1485,8 @@ class _StatHoverCardState extends State<_StatHoverCard> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    width: 44, height: 44,
+                    width: 44,
+                    height: 44,
                     decoration: BoxDecoration(
                       color: s.bg,
                       borderRadius: BorderRadius.circular(12),
@@ -932,15 +1494,22 @@ class _StatHoverCardState extends State<_StatHoverCard> {
                     child: Icon(s.icon, color: s.iconColor, size: 22),
                   ),
                   const SizedBox(height: 20),
-                  Text(s.value,
-                      style: const TextStyle(
-                          fontSize: 32,
-                          fontWeight: FontWeight.w800,
-                          color: AppColors.textPrimary)),
+                  Text(
+                    s.value,
+                    style: const TextStyle(
+                      fontSize: 32,
+                      fontWeight: FontWeight.w800,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
                   const SizedBox(height: 6),
-                  Text(s.label,
-                      style: const TextStyle(
-                          fontSize: 13, color: AppColors.textSecondary)),
+                  Text(
+                    s.label,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
                 ],
               ),
             ],
@@ -956,7 +1525,6 @@ class _StatHoverCardState extends State<_StatHoverCard> {
 /// Botão filled com escala + shadow suaves no hover
 class _HoverFilledButton extends StatefulWidget {
   final String label;
-  final IconData? icon;
   final Color color;
   final VoidCallback onTap;
   final EdgeInsets? padding;
@@ -964,7 +1532,6 @@ class _HoverFilledButton extends StatefulWidget {
 
   const _HoverFilledButton({
     required this.label,
-    this.icon,
     required this.color,
     required this.onTap,
     this.padding,
@@ -993,7 +1560,8 @@ class _HoverFilledButtonState extends State<_HoverFilledButton> {
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 180),
             curve: Curves.easeOutCubic,
-            padding: widget.padding ??
+            padding:
+                widget.padding ??
                 const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
             decoration: BoxDecoration(
               color: _hovered
@@ -1006,27 +1574,21 @@ class _HoverFilledButtonState extends State<_HoverFilledButton> {
                         color: widget.color.withValues(alpha: 0.35),
                         blurRadius: 16,
                         offset: const Offset(0, 6),
-                      )
+                      ),
                     ]
                   : [],
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(widget.label,
-                    style: TextStyle(
-                        fontSize: widget.fontSize,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white)),
-                if (widget.icon != null) ...[
-                  const SizedBox(width: 8),
-                  AnimatedSlide(
-                    offset: _hovered ? const Offset(0.15, 0) : Offset.zero,
-                    duration: const Duration(milliseconds: 180),
-                    curve: Curves.easeOutCubic,
-                    child: Icon(widget.icon, size: 16, color: Colors.white),
+                Text(
+                  widget.label,
+                  style: TextStyle(
+                    fontSize: widget.fontSize,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
                   ),
-                ],
+                ),
               ],
             ),
           ),
@@ -1076,11 +1638,14 @@ class _HoverOutlinedButtonState extends State<_HoverOutlinedButton> {
                 width: 1.5,
               ),
             ),
-            child: Text(widget.label,
-                style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary)),
+            child: Text(
+              widget.label,
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: AppColors.textPrimary,
+              ),
+            ),
           ),
         ),
       ),
@@ -1093,7 +1658,6 @@ class _HoverCard extends StatefulWidget {
   final Widget child;
   final EdgeInsets? padding;
 
-  // ignore: unused_element_parameter
   const _HoverCard({required this.child, this.padding});
 
   @override
@@ -1116,7 +1680,6 @@ class _HoverCardState extends State<_HoverCard> {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           curve: Curves.easeOutCubic,
-          padding: widget.padding,
           clipBehavior: Clip.antiAlias,
           decoration: BoxDecoration(
             color: AppColors.surface,
@@ -1130,7 +1693,7 @@ class _HoverCardState extends State<_HoverCard> {
                       color: AppColors.primary.withValues(alpha: 0.10),
                       blurRadius: 20,
                       offset: const Offset(0, 8),
-                    )
+                    ),
                   ]
                 : [],
           ),

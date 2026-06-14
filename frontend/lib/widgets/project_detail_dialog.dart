@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import '../models/project.dart';
 import '../theme/app_colors.dart';
+import '../utils/app_session.dart';
+import '../services/app_services.dart';
+import '../services/ai_analysis_service.dart';
 import 'shared_widgets.dart';
 
-enum _DialogState { view, approving, rejecting }
+enum _DialogState { view, approving, rejecting, analyzing, evaluating }
 
 class ProjectDetailDialog extends StatefulWidget {
   final Project project;
@@ -42,13 +45,44 @@ class _ProjectDetailDialogState extends State<ProjectDetailDialog> {
   _DialogState _state = _DialogState.view;
   final _feedbackController = TextEditingController();
   bool _loading = false;
+  ProjectAnalysis? _aiResult;
+  bool _aiLoading = false;
+
+  // Rubrica de avaliação
+  final Map<String, double> _rubricas = {
+    'Documentação Técnica': 7.0,
+    'Funcionamento do Sistema': 7.0,
+    'Inovação e Criatividade': 7.0,
+    'Apresentação e Interface': 7.0,
+    'Trabalho em Equipe': 7.0,
+  };
+  final _avalFeedbackCtrl = TextEditingController();
+  bool _avalSalva = false;
+
+  double get _notaFinal {
+    final soma = _rubricas.values.fold(0.0, (a, b) => a + b);
+    return soma / _rubricas.length;
+  }
 
   Project get p => widget.project;
 
   @override
   void dispose() {
     _feedbackController.dispose();
+    _avalFeedbackCtrl.dispose();
     super.dispose();
+  }
+
+  Future<void> _analyzeWithAi() async {
+    setState(() { _state = _DialogState.analyzing; _aiLoading = true; _aiResult = null; });
+    final techs = _techChips;
+    final result = await AppServices.ai.analyzeProject(
+      title: p.title,
+      description: p.description,
+      technologies: techs,
+      classGroup: p.classGroupName ?? '',
+    );
+    if (mounted) setState(() { _aiResult = result; _aiLoading = false; });
   }
 
   Future<void> _confirmApprove() async {
@@ -118,6 +152,8 @@ class _ProjectDetailDialogState extends State<ProjectDetailDialog> {
                     const SizedBox(height: 24),
                     if (_state == _DialogState.approving) _buildApproveConfirm(),
                     if (_state == _DialogState.rejecting) _buildRejectForm(),
+                    if (_state == _DialogState.analyzing) _buildAiAnalysis(),
+                    if (_state == _DialogState.evaluating) _buildRubrica(),
                     const SizedBox(height: 8),
                   ],
                 ),
@@ -419,12 +455,281 @@ class _ProjectDetailDialogState extends State<ProjectDetailDialog> {
     );
   }
 
+
+  // ─── ANÁLISE COM IA ────────────────────────────────────────────────────────
+  Widget _buildAiAnalysis() {
+    if (_aiLoading) {
+      return Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF0F4FF),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: const Color(0xFFBBCCFF)),
+        ),
+        child: const Column(children: [
+          CircularProgressIndicator(color: Color(0xFF1A237E)),
+          SizedBox(height: 16),
+          Text('A IA está analisando o projeto...', style: TextStyle(fontSize: 13, color: AppColors.textSecondary)),
+          SizedBox(height: 4),
+          Text('Avaliando tecnologias, descrição e complexidade',
+              style: TextStyle(fontSize: 11, color: AppColors.textMuted), textAlign: TextAlign.center),
+        ]),
+      );
+    }
+    if (_aiResult == null) return const SizedBox.shrink();
+    final r = _aiResult!;
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      // Score card
+      Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(colors: [Color(0xFF1A237E), Color(0xFF00ACC1)],
+              begin: Alignment.topLeft, end: Alignment.bottomRight),
+          borderRadius: BorderRadius.circular(14),
+        ),
+        child: Row(children: [
+          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text('${r.score.toStringAsFixed(1)}/10',
+                style: const TextStyle(fontSize: 32, fontWeight: FontWeight.w900, color: Colors.white)),
+            Container(
+              margin: const EdgeInsets.only(top: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+              decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(10)),
+              child: Text(r.badge, style: const TextStyle(fontSize: 11, color: Colors.white, fontWeight: FontWeight.w700)),
+            ),
+          ])),
+          Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
+            Text('Complexidade: ${r.complexity}', style: const TextStyle(fontSize: 11, color: Colors.white70)),
+            const SizedBox(height: 4),
+            Text('${_techChips.length} tecnologias', style: const TextStyle(fontSize: 11, color: Colors.white70)),
+          ]),
+        ]),
+      ),
+      const SizedBox(height: 14),
+      // Resumo
+      Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(color: const Color(0xFFF0F4FF), borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: const Color(0xFFBBCCFF))),
+        child: Text(r.summary, style: const TextStyle(fontSize: 12, color: Color(0xFF1A237E), height: 1.6)),
+      ),
+      const SizedBox(height: 14),
+      // Pontos fortes
+      const Text('Pontos Fortes', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
+      const SizedBox(height: 8),
+      ...r.strengths.map((s) => Padding(padding: const EdgeInsets.only(bottom: 6),
+        child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          const Icon(Icons.check_circle, color: Color(0xFF2E7D32), size: 15),
+          const SizedBox(width: 8),
+          Expanded(child: Text(s, style: const TextStyle(fontSize: 12, color: AppColors.textSecondary, height: 1.5))),
+        ]))),
+      const SizedBox(height: 10),
+      // Sugestões
+      const Text('Sugestões de Melhoria', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
+      const SizedBox(height: 8),
+      ...r.improvements.map((s) => Padding(padding: const EdgeInsets.only(bottom: 6),
+        child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          const Icon(Icons.arrow_forward_ios, color: Color(0xFFF57F17), size: 11),
+          const SizedBox(width: 8),
+          Expanded(child: Text(s, style: const TextStyle(fontSize: 12, color: AppColors.textSecondary, height: 1.5))),
+        ]))),
+      const SizedBox(height: 10),
+      Container(width: double.infinity, padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(color: AppColors.background, borderRadius: BorderRadius.circular(8)),
+        child: const Text('Análise gerada por IA — use como suporte à avaliação, não como nota definitiva.',
+            style: TextStyle(fontSize: 10, color: AppColors.textMuted), textAlign: TextAlign.center)),
+    ]);
+  }
+
+
+  // ─── RUBRICA DE AVALIAÇÃO ─────────────────────────────────────────────────
+  Widget _buildRubrica() {
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      // Header
+      Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [Color(0xFF1B5E20), Color(0xFF2E7D32)],
+            begin: Alignment.topLeft, end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(children: [
+          const Icon(Icons.rate_review_outlined, color: Colors.white, size: 22),
+          const SizedBox(width: 12),
+          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            const Text('Avaliação por Rubrica',
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: Colors.white)),
+            Text('Prof. ${AppSession.name.isEmpty ? "Professor" : AppSession.name.split("@").first}',
+                style: const TextStyle(fontSize: 11, color: Colors.white70)),
+          ])),
+          // Nota final em destaque
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Column(children: [
+              Text(_notaFinal.toStringAsFixed(1),
+                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w900, color: Colors.white)),
+              const Text('/ 10', style: TextStyle(fontSize: 10, color: Colors.white70)),
+            ]),
+          ),
+        ]),
+      ),
+      const SizedBox(height: 16),
+
+      // Critérios com sliders
+      ..._rubricas.entries.map((entry) {
+        final cor = entry.value >= 8.0
+            ? AppColors.statusApprovedFg
+            : entry.value >= 6.0
+                ? const Color(0xFFF57F17)
+                : AppColors.statusRejectedFg;
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 14),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Row(children: [
+              Expanded(child: Text(entry.key,
+                  style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600,
+                      color: AppColors.textPrimary))),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                decoration: BoxDecoration(
+                  color: cor.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: cor.withValues(alpha: 0.3)),
+                ),
+                child: Text('${entry.value.toStringAsFixed(1)}',
+                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: cor)),
+              ),
+            ]),
+            const SizedBox(height: 6),
+            SliderTheme(
+              data: SliderThemeData(
+                activeTrackColor: cor,
+                inactiveTrackColor: cor.withValues(alpha: 0.15),
+                thumbColor: cor,
+                overlayColor: cor.withValues(alpha: 0.12),
+                trackHeight: 5,
+              ),
+              child: Slider(
+                value: entry.value,
+                min: 0, max: 10, divisions: 20,
+                onChanged: _avalSalva ? null : (v) => setState(() => _rubricas[entry.key] = v),
+              ),
+            ),
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+              Text('Insuficiente (0)', style: TextStyle(fontSize: 9, color: Colors.grey[400])),
+              Text('Excelente (10)',   style: TextStyle(fontSize: 9, color: Colors.grey[400])),
+            ]),
+          ]),
+        );
+      }),
+
+      const SizedBox(height: 4),
+      // Feedback textual
+      const Text('Feedback para o Aluno',
+          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
+      const SizedBox(height: 6),
+      TextField(
+        controller: _avalFeedbackCtrl,
+        maxLines: 3,
+        enabled: !_avalSalva,
+        style: const TextStyle(fontSize: 13),
+        decoration: InputDecoration(
+          hintText: 'Descreva os pontos fortes e o que pode ser melhorado...',
+          hintStyle: const TextStyle(fontSize: 12, color: AppColors.textMuted),
+          filled: true,
+          fillColor: AppColors.background,
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
+          enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: AppColors.border)),
+          focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: AppColors.statusApprovedFg)),
+          contentPadding: const EdgeInsets.all(12),
+        ),
+      ),
+
+      if (_avalSalva) ...[
+        const SizedBox(height: 12),
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: AppColors.statusApprovedBg,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: const Color(0xFFA7D7A8)),
+          ),
+          child: const Row(children: [
+            Icon(Icons.check_circle_outline, color: AppColors.statusApprovedFg, size: 18),
+            SizedBox(width: 8),
+            Expanded(child: Text('Avaliação registrada com sucesso!',
+                style: TextStyle(fontSize: 12, color: AppColors.statusApprovedFg, fontWeight: FontWeight.w600))),
+          ]),
+        ),
+      ],
+
+      const SizedBox(height: 16),
+      if (!_avalSalva)
+        SizedBox(width: double.infinity,
+          child: ElevatedButton.icon(
+            onPressed: () => setState(() => _avalSalva = true),
+            icon: const Icon(Icons.save_outlined, size: 16),
+            label: const Text('Salvar Avaliação', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF2E7D32),
+              foregroundColor: Colors.white, elevation: 0,
+              padding: const EdgeInsets.symmetric(vertical: 13),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            ),
+          )),
+    ]);
+  }
+
   // ─── RODAPÉ (botões) ────────────────────────────────────────────────────────
   Widget _buildFooter() {
     return Container(
       padding: const EdgeInsets.all(20),
       child: Column(
         children: [
+          // Botão IA — sempre visível no estado view
+          if (_state == _DialogState.view) ...[
+            SizedBox(width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: _analyzeWithAi,
+                icon: const Icon(Icons.auto_awesome, size: 16),
+                label: const Text('Analisar com IA',
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF1A237E),
+                  foregroundColor: Colors.white, elevation: 0,
+                  padding: const EdgeInsets.symmetric(vertical: 13),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                ),
+              )),
+            const SizedBox(height: 10),
+          ],
+
+          // Botão voltar quando analisando ou avaliando
+          if (_state == _DialogState.analyzing || _state == _DialogState.evaluating) ...[
+            SizedBox(width: double.infinity,
+              child: OutlinedButton.icon(
+                onPressed: () => setState(() {
+                  _state = _DialogState.view;
+                  _avalSalva = false;
+                }),
+                icon: const Icon(Icons.arrow_back, size: 16),
+                label: const Text('Voltar', style: TextStyle(fontSize: 14)),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: AppColors.textSecondary,
+                  side: const BorderSide(color: AppColors.border),
+                  padding: const EdgeInsets.symmetric(vertical: 13),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                ),
+              )),
+            const SizedBox(height: 10),
+          ],
+
           // Botões de ação por estado
           if (_state == _DialogState.view && p.status == ProjectStatus.submitted)
             Column(
