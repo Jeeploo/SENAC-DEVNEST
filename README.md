@@ -67,25 +67,25 @@ The platform strengthens the connection between students, teachers, and SENAC pa
 ## 👥 User Profiles | Perfis de Usuário
 
 ### 🎓 Student | Aluno
-
+Acesso: aluno@devnest.com / Senha: 123456
 Participates in projects, accesses content, follows activities, and interacts with teachers and partner companies.
 
 Participa de projetos, acessa conteúdos, acompanha atividades e interage com professores e empresas parceiras.
 
 ### 👨‍🏫 Teacher | Professor
-
+Acesso: professor@devnest.com / Senha: 123456
 Mentors students, creates activities, tracks performance, and validates academic deliveries.
 
 Orienta alunos, cria atividades, acompanha desempenho e valida entregas acadêmicas.
 
 ### 🛠️ Administrator / Coordinator | Administrador / Coordenador
-
+Acesso: coordenador@devnest.com / Senha: 123456
 Manages users, classes, projects, and platform permissions.
 
 Gerencia usuários, turmas, projetos e permissões da plataforma.
 
 ### 🏢 Partner Company | Empresa Parceira
-
+Acesso: empresa@devnest.com / Senha: 123456
 Provides challenges, opportunities, mentoring, and connections between students and the job market.
 
 Oferece desafios, oportunidades, mentorias e conexão entre estudantes e o mercado.
