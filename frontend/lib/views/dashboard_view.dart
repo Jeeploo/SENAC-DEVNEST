@@ -80,7 +80,6 @@ class DashboardView extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const AppFooter(),
                 ],
               ),
             ),

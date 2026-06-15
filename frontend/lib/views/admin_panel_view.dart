@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../controllers/admin_controller.dart';
 import '../models/project.dart';
+import '../models/user.dart';
+import '../services/user_service.dart';
 import '../theme/app_colors.dart';
 import '../utils/responsive.dart';
 import '../widgets/shared_widgets.dart';
@@ -24,52 +26,72 @@ class _AdminPanelViewState extends State<AdminPanelView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      drawer: Responsive.isMobile(context) || Responsive.isTablet(context)
-          ? const AppDrawer()
-          : null,
-      body: Column(
-        children: [
-          const AppNavBar(),
-          Expanded(
-            child: ListenableBuilder(
-              listenable: _controller,
-              builder: (context, _) => SingleChildScrollView(
-                child: Column(
-                  children: [
-                    Center(
-                      child: ConstrainedBox(
-                        constraints: const BoxConstraints(maxWidth: 1200),
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: Responsive.value(context,
-                                mobile: 16.0, tablet: 24.0, desktop: 32.0),
-                            vertical: Responsive.value(context,
-                                mobile: 20.0, tablet: 24.0, desktop: 28.0),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              _PageHeader(),
-                              const SizedBox(height: 20),
-                              _StatsGrid(controller: _controller),
-                              const SizedBox(height: 20),
-                              _ProjectsCard(controller: _controller),
-                              const SizedBox(height: 20),
-                              _RelatoriosCard(controller: _controller),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    const AppFooter(),
-                  ],
-                ),
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        drawer: Responsive.isMobile(context) || Responsive.isTablet(context)
+            ? const AppDrawer()
+            : null,
+        body: Column(
+          children: [
+            const AppNavBar(),
+            Container(
+              color: AppColors.surface,
+              child: const TabBar(
+                labelColor: AppColors.primary,
+                unselectedLabelColor: AppColors.textMuted,
+                indicatorColor: AppColors.primary,
+                indicatorWeight: 3,
+                tabs: [
+                  Tab(text: 'Visão Geral'),
+                  Tab(text: 'Usuários'),
+                ],
               ),
             ),
-          ),
-        ],
+            Expanded(
+              child: TabBarView(
+                children: [
+                  ListenableBuilder(
+                    listenable: _controller,
+                    builder: (context, _) => SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          Center(
+                            child: ConstrainedBox(
+                              constraints: const BoxConstraints(maxWidth: 1200),
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: Responsive.value(context,
+                                      mobile: 16.0, tablet: 24.0, desktop: 32.0),
+                                  vertical: Responsive.value(context,
+                                      mobile: 20.0, tablet: 24.0, desktop: 28.0),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    _PageHeader(),
+                                    const SizedBox(height: 20),
+                                    _StatsGrid(controller: _controller),
+                                    const SizedBox(height: 20),
+                                    _ProjectsCard(controller: _controller),
+                                    const SizedBox(height: 20),
+                                    _RelatoriosCard(controller: _controller),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const _UsuariosTab(),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -904,4 +926,290 @@ class _RelatStat extends StatelessWidget {
       Text(label, style: const TextStyle(fontSize: 9, color: AppColors.textMuted), textAlign: TextAlign.center),
     ]),
   ));
+}
+
+// ─── TAB: USUÁRIOS ────────────────────────────────────────────────────────────
+class _UsuariosTab extends StatefulWidget {
+  const _UsuariosTab();
+  @override
+  State<_UsuariosTab> createState() => _UsuariosTabState();
+}
+
+class _UsuariosTabState extends State<_UsuariosTab> {
+  UserProfile? _filterProfile;
+  int? _filterTurmaId;
+  bool? _filterAtivo;
+
+  List<User> get _filtered {
+    var list = UserService.all.toList();
+    if (_filterProfile != null) list = list.where((u) => u.profile == _filterProfile).toList();
+    if (_filterTurmaId != null) list = list.where((u) => u.classGroupId == _filterTurmaId).toList();
+    if (_filterAtivo != null) list = list.where((u) => u.isActive == _filterAtivo).toList();
+    return list;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final mobile = Responsive.isMobile(context);
+    final hPad = Responsive.value<double>(context, mobile: 16, tablet: 24, desktop: 32);
+
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 1200),
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: hPad, vertical: 24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Header
+                    Row(children: [
+                      Container(
+                        width: mobile ? 38 : 44, height: mobile ? 38 : 44,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFE8F5E9),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Icon(Icons.people_outline,
+                            color: const Color(0xFF2E7D32), size: mobile ? 20 : 24),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Gestão de Usuários',
+                              style: TextStyle(
+                                  fontSize: mobile ? 17 : 22,
+                                  fontWeight: FontWeight.w700,
+                                  color: AppColors.textPrimary)),
+                          const SizedBox(height: 2),
+                          const Text('Gerencie perfis, turmas e status de acesso',
+                              style: TextStyle(fontSize: 12, color: AppColors.textMuted)),
+                        ],
+                      )),
+                      ElevatedButton.icon(
+                        onPressed: () => Navigator.pushNamed(context, '/cadastro'),
+                        icon: const Icon(Icons.person_add_outlined, size: 16),
+                        label: Text(mobile ? 'Novo' : 'Novo Usuário',
+                            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primary,
+                          foregroundColor: Colors.white,
+                          elevation: 0,
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        ),
+                      ),
+                    ]),
+                    const SizedBox(height: 20),
+
+                    // Filtros
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(children: [
+                        _FilterChip(
+                          label: 'Todos',
+                          active: _filterProfile == null && _filterAtivo == null,
+                          onTap: () => setState(() { _filterProfile = null; _filterTurmaId = null; _filterAtivo = null; }),
+                        ),
+                        const SizedBox(width: 8),
+                        _FilterChip(label: 'Alunos', active: _filterProfile == UserProfile.student,
+                            onTap: () => setState(() => _filterProfile = _filterProfile == UserProfile.student ? null : UserProfile.student)),
+                        const SizedBox(width: 8),
+                        _FilterChip(label: 'Professores', active: _filterProfile == UserProfile.teacher,
+                            onTap: () => setState(() => _filterProfile = _filterProfile == UserProfile.teacher ? null : UserProfile.teacher)),
+                        const SizedBox(width: 8),
+                        _FilterChip(label: 'Empresas', active: _filterProfile == UserProfile.company,
+                            onTap: () => setState(() => _filterProfile = _filterProfile == UserProfile.company ? null : UserProfile.company)),
+                        const SizedBox(width: 8),
+                        _FilterChip(label: 'Ativos', active: _filterAtivo == true,
+                            onTap: () => setState(() => _filterAtivo = _filterAtivo == true ? null : true)),
+                        const SizedBox(width: 8),
+                        _FilterChip(label: 'Inativos', active: _filterAtivo == false,
+                            onTap: () => setState(() => _filterAtivo = _filterAtivo == false ? null : false)),
+                      ]),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Lista
+                    ..._filtered.map((u) => _UserRow(
+                      user: u,
+                      onToggleActive: () => setState(() => UserService.toggleActive(u.id)),
+                      onChangeTurma: (turmaId) => setState(() => UserService.updateTurma(u.id, turmaId)),
+                    )),
+                    if (_filtered.isEmpty)
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 40),
+                        child: Center(child: Text('Nenhum usuário encontrado.',
+                            style: TextStyle(color: AppColors.textMuted))),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _FilterChip extends StatelessWidget {
+  final String label;
+  final bool active;
+  final VoidCallback onTap;
+  const _FilterChip({required this.label, required this.active, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) => GestureDetector(
+    onTap: onTap,
+    child: Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: active ? AppColors.primary : AppColors.surface,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: active ? AppColors.primary : AppColors.border),
+      ),
+      child: Text(label,
+          style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              color: active ? Colors.white : AppColors.textSecondary)),
+    ),
+  );
+}
+
+class _UserRow extends StatelessWidget {
+  final User user;
+  final VoidCallback onToggleActive;
+  final void Function(int? turmaId) onChangeTurma;
+  const _UserRow({required this.user, required this.onToggleActive, required this.onChangeTurma});
+
+  static const _profileLabels = {
+    UserProfile.student:     'Aluno',
+    UserProfile.teacher:     'Professor',
+    UserProfile.coordinator: 'Coordenador',
+    UserProfile.company:     'Empresa',
+  };
+
+  static const _profileColors = {
+    UserProfile.student:     Color(0xFF1565C0),
+    UserProfile.teacher:     Color(0xFF2E7D32),
+    UserProfile.coordinator: Color(0xFFE65100),
+    UserProfile.company:     Color(0xFF7B1FA2),
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    final color = _profileColors[user.profile] ?? AppColors.primary;
+    final label = _profileLabels[user.profile] ?? '';
+    final turmaName = UserService.turmaName(user.classGroupId);
+    final mobile = Responsive.isMobile(context);
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+              color: user.isActive ? AppColors.border : AppColors.border.withValues(alpha: 0.5)),
+        ),
+        child: Row(children: [
+          CircleAvatar(
+            radius: 20,
+            backgroundColor: color.withValues(alpha: 0.15),
+            child: Text(user.initials,
+                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: color)),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Row(children: [
+                Flexible(child: Text(user.name,
+                    style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: user.isActive ? AppColors.textPrimary : AppColors.textMuted))),
+                const SizedBox(width: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: color.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Text(label,
+                      style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: color)),
+                ),
+              ]),
+              const SizedBox(height: 2),
+              Text(user.email,
+                  style: const TextStyle(fontSize: 11, color: AppColors.textSecondary)),
+              if (!mobile && user.profile == UserProfile.student && turmaName != '—') ...[
+                const SizedBox(height: 2),
+                Text(turmaName,
+                    style: const TextStyle(fontSize: 11, color: AppColors.textMuted)),
+              ],
+            ]),
+          ),
+          const SizedBox(width: 8),
+          if (user.profile == UserProfile.student)
+            _TurmaDropdown(
+              current: user.classGroupId,
+              onChanged: onChangeTurma,
+            ),
+          const SizedBox(width: 8),
+          GestureDetector(
+            onTap: onToggleActive,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              decoration: BoxDecoration(
+                color: user.isActive ? AppColors.statusApprovedBg : AppColors.statusRejectedBg,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                user.isActive ? 'Ativo' : 'Inativo',
+                style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: user.isActive
+                        ? AppColors.statusApprovedFg
+                        : AppColors.statusRejectedFg),
+              ),
+            ),
+          ),
+        ]),
+      ),
+    );
+  }
+}
+
+class _TurmaDropdown extends StatelessWidget {
+  final int? current;
+  final void Function(int?) onChanged;
+  const _TurmaDropdown({required this.current, required this.onChanged});
+
+  @override
+  Widget build(BuildContext context) => Container(
+    padding: const EdgeInsets.symmetric(horizontal: 10),
+    decoration: BoxDecoration(
+      color: AppColors.background,
+      borderRadius: BorderRadius.circular(8),
+      border: Border.all(color: AppColors.border),
+    ),
+    child: DropdownButton<int?>(
+      value: current,
+      hint: const Text('Turma', style: TextStyle(fontSize: 12, color: AppColors.textMuted)),
+      underline: const SizedBox.shrink(),
+      style: const TextStyle(fontSize: 12, color: AppColors.textPrimary),
+      onChanged: onChanged,
+      items: [
+        const DropdownMenuItem(value: null, child: Text('Sem turma')),
+        ...UserService.mockTurmas.map((t) => DropdownMenuItem(value: t.id, child: Text(t.name))),
+      ],
+    ),
+  );
 }

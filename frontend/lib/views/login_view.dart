@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import '../models/user.dart';
+import '../services/auth_service.dart';
 import '../theme/app_colors.dart';
 import '../utils/app_session.dart';
-import '../widgets/shared_widgets.dart';
 
 // ─── ESTADOS DA TELA ─────────────────────────────────────────────────────────
 enum _LoginState {
@@ -36,7 +37,7 @@ class _LoginViewState extends State<LoginView> {
 
   void _goTo(String route) => Navigator.pushReplacementNamed(context, route);
 
-  Future<void> _submit(String route, String role) async {
+  Future<void> _submit() async {
     if (_emailCtrl.text.trim().isEmpty || _passCtrl.text.isEmpty) {
       setState(() => _error = 'Preencha email e senha.');
       return;
@@ -45,9 +46,27 @@ class _LoginViewState extends State<LoginView> {
       _loading = true;
       _error = null;
     });
-    await Future.delayed(const Duration(milliseconds: 600));
-    AppSession.login(role: role, name: _emailCtrl.text.trim());
-    if (mounted) _goTo('/'); // sempre inicia na página inicial
+    await Future.delayed(const Duration(milliseconds: 400));
+    if (!mounted) return;
+
+    final user = AuthService.login(_emailCtrl.text, _passCtrl.text);
+    if (user == null) {
+      setState(() {
+        _loading = false;
+        _error = 'E-mail ou senha incorretos. Tente novamente.';
+      });
+      return;
+    }
+
+    AppSession.loginUser(user);
+
+    final route = switch (user.profile) {
+      UserProfile.student     => '/student-panel',
+      UserProfile.teacher     => '/painel-professor',
+      UserProfile.coordinator => '/admin',
+      UserProfile.company     => '/painel-empresa',
+    };
+    _goTo(route);
   }
 
   @override
@@ -111,25 +130,7 @@ class _LoginViewState extends State<LoginView> {
                                       _passCtrl.clear();
                                     });
                                   },
-                                  onSubmit: () {
-                                    String route, role;
-                                    if (_state == _LoginState.adminLogin) {
-                                      route = '/admin';
-                                      role = 'coordenador';
-                                    } else if (_state ==
-                                        _LoginState.professorLogin) {
-                                      route = '/feedbacks';
-                                      role = 'professor';
-                                    } else if (_state ==
-                                        _LoginState.companyLogin) {
-                                      route = '/networking';
-                                      role = 'empresa';
-                                    } else {
-                                      route = '/student-panel';
-                                      role = 'aluno';
-                                    }
-                                    _submit(route, role);
-                                  },
+                                  onSubmit: _submit,
                                 ),
                         ),
                       ),
@@ -137,7 +138,6 @@ class _LoginViewState extends State<LoginView> {
                   ],
                 ),
               ),
-                  const AppFooter(),
                 ],
               ),
             ),

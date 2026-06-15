@@ -547,7 +547,6 @@ class _CadastroViewState extends State<CadastroView> {
                   ],
                 ),
               ),
-                  const AppFooter(),
                 ],
               ),
             ),
