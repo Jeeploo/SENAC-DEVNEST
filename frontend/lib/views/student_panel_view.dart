@@ -3,7 +3,9 @@ import '../theme/app_colors.dart';
 import '../utils/responsive.dart';
 import '../widgets/shared_widgets.dart';
 import '../services/app_services.dart';
+import '../services/interest_service.dart';
 import '../services/matching_service.dart';
+import '../utils/app_session.dart';
 import 'desafios_aluno_section.dart';
 
 // ─── STATUS ──────────────────────────────────────────────────────────────────
@@ -252,7 +254,7 @@ class _StudentPanelViewState extends State<StudentPanelView> {
     final mobile = Responsive.isMobile(context);
     final hPad = mobile ? 16.0 : 40.0;
     return DefaultTabController(
-      length: 2,
+      length: 3,
       child: Scaffold(
         backgroundColor: AppColors.background,
         drawer: mobile ? const AppDrawer() : null,
@@ -269,6 +271,7 @@ class _StudentPanelViewState extends State<StudentPanelView> {
                 tabs: [
                   Tab(text: 'Meus Projetos'),
                   Tab(text: 'Desafios das Empresas'),
+                  Tab(text: 'Oportunidades'),
                 ],
               ),
             ),
@@ -519,12 +522,12 @@ class _StudentPanelViewState extends State<StudentPanelView> {
                         ),
                       ),
                     ),
-                  const AppFooter(),
                   ],
                 ),
               ),
             ),
             const DesafiosAlunoSection(),
+            const _OportunidadesTab(),
           ],
         ),
       ),
@@ -3154,6 +3157,189 @@ class _QrCodeDialog extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+// ─── TAB: OPORTUNIDADES ───────────────────────────────────────────────────────
+class _OportunidadesTab extends StatelessWidget {
+  const _OportunidadesTab();
+
+  @override
+  Widget build(BuildContext context) {
+    final alunoId = AppSession.userId > 0 ? AppSession.userId : 1;
+    final interests = InterestService.forAluno(alunoId);
+    final mobile = Responsive.isMobile(context);
+    final hPad = mobile ? 16.0 : 40.0;
+
+    return SingleChildScrollView(
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1200),
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: hPad, vertical: 28),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header
+                Row(
+                  children: [
+                    Container(
+                      width: 44, height: 44,
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFF7C3AED), AppColors.primary],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: const Icon(Icons.business_center_outlined, color: Colors.white, size: 22),
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Oportunidades',
+                            style: TextStyle(
+                              fontSize: mobile ? 18 : 22,
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.textPrimary,
+                            ),
+                          ),
+                          const Text(
+                            'Empresas que demonstraram interesse nos seus projetos',
+                            style: TextStyle(fontSize: 12, color: AppColors.textMuted),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: AppColors.primary.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        '${interests.length} interesse${interests.length != 1 ? 's' : ''}',
+                        style: const TextStyle(
+                          fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.primary,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 24),
+
+                if (interests.isEmpty)
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(vertical: 56),
+                    decoration: BoxDecoration(
+                      color: AppColors.surface,
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(color: AppColors.border),
+                    ),
+                    child: const Column(
+                      children: [
+                        Icon(Icons.inbox_outlined, size: 44, color: AppColors.textMuted),
+                        SizedBox(height: 12),
+                        Text(
+                          'Nenhuma empresa demonstrou interesse ainda.',
+                          style: TextStyle(fontSize: 14, color: AppColors.textMuted),
+                        ),
+                        SizedBox(height: 4),
+                        Text(
+                          'Suas propostas aprovadas aparecerão aqui.',
+                          style: TextStyle(fontSize: 12, color: AppColors.textMuted),
+                        ),
+                      ],
+                    ),
+                  )
+                else
+                  ...interests.map((i) => Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: _InterestCard(interest: i),
+                  )),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _InterestCard extends StatelessWidget {
+  final dynamic interest;
+  const _InterestCard({required this.interest});
+
+  @override
+  Widget build(BuildContext context) {
+    final date = interest.date as DateTime;
+    final dateStr =
+        '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.primary.withValues(alpha: 0.2)),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 44, height: 44,
+            decoration: BoxDecoration(
+              color: AppColors.primary.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: const Icon(Icons.business_outlined, color: AppColors.primary, size: 22),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  interest.empresaNome as String,
+                  style: const TextStyle(
+                    fontSize: 14, fontWeight: FontWeight.w700, color: AppColors.textPrimary,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  'Projeto: ${interest.projetoTitulo}',
+                  style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  'Interesse registrado em $dateStr',
+                  style: const TextStyle(fontSize: 11, color: AppColors.textMuted),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            decoration: BoxDecoration(
+              color: AppColors.statusApprovedBg,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: const Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.star_border, size: 13, color: AppColors.statusApprovedFg),
+                SizedBox(width: 4),
+                Text('Interessada',
+                    style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.statusApprovedFg)),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -3,7 +3,6 @@ import '../services/challenge_service.dart';
 import '../theme/app_colors.dart';
 import '../utils/app_session.dart';
 import '../utils/responsive.dart';
-import '../widgets/shared_widgets.dart';
 
 // ─── SEÇÃO DESAFIOS (painel empresa) ──────────────────────────────────────────
 class DesafiosEmpresaSection extends StatefulWidget {
@@ -205,7 +204,6 @@ class _DesafiosEmpresaSectionState extends State<DesafiosEmpresaSection> {
               ),
             ),
           ),
-          const AppFooter(),
         ],
       ),
     );

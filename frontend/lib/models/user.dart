@@ -32,6 +32,7 @@ class User {
   final String? profilePicture;
   final int? classGroupId;
   final DateTime createdAt;
+  final bool isActive;
 
   const User({
     required this.id,
@@ -44,14 +45,37 @@ class User {
     this.profilePicture,
     this.classGroupId,
     required this.createdAt,
+    this.isActive = true,
   });
 
-  // Initials for avatar (e.g. "Lucas Ferreira" -> "LF")
   String get initials {
     final parts = name.trim().split(' ');
     if (parts.length >= 2) return '${parts.first[0]}${parts.last[0]}'.toUpperCase();
     return parts.first.substring(0, 2).toUpperCase();
   }
+
+  User copyWith({
+    String? name,
+    String? email,
+    UserProfile? profile,
+    String? course,
+    String? institution,
+    int? classGroupId,
+    bool? isActive,
+  }) =>
+      User(
+        id: id,
+        name: name ?? this.name,
+        email: email ?? this.email,
+        password: password,
+        profile: profile ?? this.profile,
+        course: course ?? this.course,
+        institution: institution ?? this.institution,
+        profilePicture: profilePicture,
+        classGroupId: classGroupId ?? this.classGroupId,
+        createdAt: createdAt,
+        isActive: isActive ?? this.isActive,
+      );
 
   factory User.fromMap(Map<String, dynamic> map) => User(
         id: map['id'] as int,
@@ -64,6 +88,7 @@ class User {
         profilePicture: map['foto_perfil'] as String?,
         classGroupId: map['turma_id'] as int?,
         createdAt: DateTime.parse(map['created_at'] as String),
+        isActive: (map['ativo'] as bool?) ?? true,
       );
 
   Map<String, dynamic> toMap() => {
@@ -77,5 +102,6 @@ class User {
         'foto_perfil': profilePicture,
         'turma_id': classGroupId,
         'created_at': createdAt.toIso8601String(),
+        'ativo': isActive,
       };
 }

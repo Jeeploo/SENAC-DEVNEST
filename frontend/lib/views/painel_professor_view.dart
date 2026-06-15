@@ -68,7 +68,6 @@ class _PainelProfessorViewState extends State<PainelProfessorView> {
                         ),
                       ),
                     ),
-                    const AppFooter(),
                   ],
                 ),
               ),
